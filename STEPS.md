@@ -9,13 +9,13 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
 **Határidő:** 2025-09-15  
 **Cél:** A projekt alapjainak lefektetése, környezet, konténerizáció, CI/CD és dokumentáció.
 
-- [ ] **Repo létrehozása**
-  - [ ] Új GitHub repository létrehozása: `balanceeaga`
-  - [ ] `.gitignore` feltöltése (Node.js, Python, Docker, IDE fájlok kizárva)
-  - [ ] Alap README.md feltöltése
+- [x] **Repo létrehozása**
+  - [x] Új GitHub repository létrehozása: `balanceeaga`
+  - [x] `.gitignore` feltöltése (Node.js, Python, Docker, IDE fájlok kizárva)
+  - [x] Alap README.md feltöltése
 
 - [ ] **Projekt skeleton**
-  - [ ] `frontend/` mappa létrehozása és Vite + React + TS init  
+  - [x] `frontend/` mappa létrehozása és Vite + React + TS init  
     - `npm create vite@latest frontend -- --template react-ts`
     - `npm install` + Tailwind + shadcn/ui + TanStack Query + React Hook Form + Zod
   - [ ] `backend/` mappa létrehozása és FastAPI init  
