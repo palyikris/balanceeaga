@@ -14,18 +14,18 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
   - [x] `.gitignore` feltöltése (Node.js, Python, Docker, IDE fájlok kizárva)
   - [x] Alap README.md feltöltése
 
-- [ ] **Projekt skeleton**
+- [x] **Projekt skeleton**
   - [x] `frontend/` mappa létrehozása és Vite + React + TS init  
     - `npm create vite@latest frontend -- --template react-ts`
     - `npm install` + Tailwind + shadcn/ui + TanStack Query + React Hook Form + Zod
-  - [ ] `backend/` mappa létrehozása és FastAPI init  
+  - [x] `backend/` mappa létrehozása és FastAPI init  
     - `pip install fastapi uvicorn[standard] sqlalchemy alembic psycopg2-binary python-jose[cryptography] passlib[bcrypt] redis celery`
 
-- [ ] **Docker Compose**
-  - [ ] Dockerfile a backendhez  
-  - [ ] Dockerfile a frontendhez  
-  - [ ] `docker-compose.yml`: szolgáltatások: `frontend`, `backend`, `db (PostgreSQL)`, `redis`, `worker`
-  - [ ] Healthcheckek hozzáadása  
+- [x] **Docker Compose**
+  - [x] Dockerfile a backendhez  
+  - [x] Dockerfile a frontendhez  
+  - [x] `docker-compose.yml`: szolgáltatások: `frontend`, `backend`, `db (PostgreSQL)`, `redis`, `worker`
+  - [x] Healthcheckek hozzáadása  
 
 - [ ] **CI/CD pipeline**
   - [ ] GitHub Actions workflow létrehozása: `lint + test + build`
