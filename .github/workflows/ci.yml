@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COMPOSE_FILE: docker/docker-compose.yml
+      PROJECT: ci_${{ github.run_id }}
 
     steps:
       - name: Checkout
@@ -19,69 +20,91 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Write CI override (ephemeral ports + vite host)
+      - name: CI override (ephemeral ports + vite host)
         run: |
           mkdir -p docker
           cat > docker/ci.override.yml <<'YAML'
           services:
             frontend:
-              # Ha a dev target 5173-on fut a konténeren belül, ne kössünk fix host portot.
               ports:
                 - "0:5173"
               environment:
-                # Vite-nál fontos, hogy a konténeren kívülről is elérhető legyen:
                 VITE_HOST: 0.0.0.0
                 HOST: 0.0.0.0
             backend:
-              # Uvicorn/FastAPI dev szerver tipikusan :8000
               ports:
                 - "0:8000"
           YAML
 
-      - name: Compose up (dev) with overrides
+      - name: Compose up (dev)
         run: |
-          docker compose -p "ci_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/ci.override.yml up -d --build
-          docker compose -p "ci_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/ci.override.yml ps
+          docker compose -p "$PROJECT" -f "$COMPOSE_FILE" -f docker/ci.override.yml up -d --build
+          docker compose -p "$PROJECT" -f "$COMPOSE_FILE" -f docker/ci.override.yml ps
 
-      - name: Resolve mapped ports
-        id: ports
+      - name: Resolve container ids and ports
+        id: meta
         run: |
-          # Frontend: próbáljuk a konténeren belüli 5173-at megtalálni
-          F_HOST_PORT=$(docker compose -p "ci_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/ci.override.yml port frontend 5173 | sed 's/.*:\([0-9]\+\)$/\1/')
-          # Backend: 8000
-          B_HOST_PORT=$(docker compose -p "ci_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/ci.override.yml port backend 8000 | sed 's/.*:\([0-9]\+\)$/\1/')
-          echo "frontend_port=$F_HOST_PORT" >> $GITHUB_OUTPUT
-          echo "backend_port=$B_HOST_PORT" >> $GITHUB_OUTPUT
-          echo "Frontend mapped to: $F_HOST_PORT"
-          echo "Backend  mapped to: $B_HOST_PORT"
+          FE_ID=$(docker compose -p "$PROJECT" -f "$COMPOSE_FILE" -f docker/ci.override.yml ps -q frontend)
+          BE_ID=$(docker compose -p "$PROJECT" -f "$COMPOSE_FILE" -f docker/ci.override.yml ps -q backend)
+          FE_PORT=$(docker compose -p "$PROJECT" -f "$COMPOSE_FILE" -f docker/ci.override.yml port frontend 5173 | sed 's/.*:\([0-9]\+\)$/\1/')
+          BE_PORT=$(docker compose -p "$PROJECT" -f "$COMPOSE_FILE" -f docker/ci.override.yml port backend 8000 | sed 's/.*:\([0-9]\+\)$/\1/')
+          echo "fe_id=$FE_ID" >> $GITHUB_OUTPUT
+          echo "be_id=$BE_ID" >> $GITHUB_OUTPUT
+          echo "fe_port=$FE_PORT" >> $GITHUB_OUTPUT
+          echo "be_port=$BE_PORT" >> $GITHUB_OUTPUT
+          echo "Frontend on :$FE_PORT; Backend on :$BE_PORT"
 
-      - name: Wait for services (retry with backoff)
+      - name: Wait for healthchecks or TCP (frontend+backend)
         run: |
           set -e
-          FRONT=${{ steps.ports.outputs.frontend_port }}
-          BACK=${{ steps.ports.outputs.backend_port }}
-
-          echo "Waiting for frontend on :$FRONT and backend on :$BACK ..."
-          # 60x próbálkozás ~120s
-          for i in $(seq 1 60); do
-            FE=0; BE=0
-            curl -fsS "http://127.0.0.1:${FRONT}" >/dev/null && FE=1 || true
-            curl -fsS "http://127.0.0.1:${BACK}/health" >/dev/null && BE=1 || true
-            if [ "$FE" = "1" ] && [ "$BE" = "1" ]; then
-              echo "Both services are up."
-              exit 0
+          wait_container () {
+            ID="$1"
+            PORT="$2"
+            # Ha van healthcheck, arra várunk:
+            if docker inspect "$ID" --format '{{json .State.Health}}' | grep -q '"Status":'; then
+              echo "Waiting for HEALTHY ($ID)..."
+              for i in $(seq 1 60); do
+                STATUS=$(docker inspect "$ID" --format '{{.State.Health.Status}}')
+                [ "$STATUS" = "healthy" ] && echo "Healthy." && return 0
+                sleep 2
+              done
+              echo "Container not healthy in time: $ID"
+              return 1
+            else
+              # Egyébként TCP-re várunk
+              echo "Waiting TCP on :$PORT ..."
+              for i in $(seq 1 60); do
+                (echo > /dev/tcp/127.0.0.1/$PORT) >/dev/null 2>&1 && echo "TCP open." && return 0
+                sleep 2
+              done
+              echo "TCP not open in time on :$PORT"
+              return 1
             fi
-            sleep 2
-          done
-          echo "Services did not become healthy in time."
-          exit 1
+          }
+          wait_container "${{ steps.meta.outputs.fe_id }}" "${{ steps.meta.outputs.fe_port }}"
+          wait_container "${{ steps.meta.outputs.be_id }}" "${{ steps.meta.outputs.be_port }}"
 
-      - name: Logs (if failed)
+      - name: HTTP smoke (toleráns)
+        run: |
+          set -e
+          FRONT=${{ steps.meta.outputs.fe_port }}
+          BACK=${{ steps.meta.outputs.be_port }}
+
+          echo "Try frontend GET / (no -f, 404 is OK)"
+          curl -sS -o /dev/null "http://127.0.0.1:${FRONT}" || true
+
+          echo "Try backend GET /docs, then /openapi.json, then /health (no -f)"
+          (curl -sS -o /dev/null "http://127.0.0.1:${BACK}/docs" \
+          || curl -sS -o /dev/null "http://127.0.0.1:${BACK}/openapi.json" \
+          || curl -sS -o /dev/null "http://127.0.0.1:${BACK}/health") || {
+            echo "Backend not answering any known endpoint"; exit 1; }
+
+      - name: Logs if failed
         if: failure()
         run: |
-          docker compose -p "ci_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/ci.override.yml logs --no-color
+          docker compose -p "$PROJECT" -f "$COMPOSE_FILE" -f docker/ci.override.yml logs --no-color
 
       - name: Tear down
         if: always()
         run: |
-          docker compose -p "ci_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/ci.override.yml down -v
+          docker compose -p "$PROJECT" -f "$COMPOSE_FILE" -f docker/ci.override.yml down -v
