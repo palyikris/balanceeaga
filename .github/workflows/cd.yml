@@ -7,8 +7,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  FRONTEND_IMAGE: ${{ github.repository }}-frontend
-  BACKEND_IMAGE:  ${{ github.repository }}-backend
 
 permissions:
   contents: read
@@ -32,7 +30,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # --- Frontend prod image ---
       - name: Build & Push frontend (prod)
         uses: docker/build-push-action@v6
         with:
@@ -41,10 +38,9 @@ jobs:
           target: prod
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository }}-frontend:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}-frontend:${{ github.sha }}
 
-      # --- Backend prod image ---
       - name: Build & Push backend (prod)
         uses: docker/build-push-action@v6
         with:
@@ -53,61 +49,78 @@ jobs:
           target: prod
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:latest
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository }}-backend:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}-backend:${{ github.sha }}
 
   prod-smoketest:
     needs: build-and-push-prod-images
     runs-on: ubuntu-latest
+    env:
+      COMPOSE_FILE: docker/docker-compose.yml
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare compose override from pushed images
+      - name: Write CD override (use GHCR images + ephemeral ports)
         run: |
-          # Ideiglenes compose fájl, ami a frissen pusholt képeket használja.
-          cat > docker-compose.ci.override.yml <<'YAML'
+          mkdir -p docker
+          cat > docker/docker-compose.ci.override.yml <<'YAML'
           services:
             frontend:
               image: ghcr.io/${{ github.repository }}-frontend:latest
+              # prod image-ben tipikusan NGINX:80 -> host ephemeral
               ports:
-                - "5173:80"      # prod image-ben NGINX (80), ha mást használsz, módosítsd
-              environment:
-                # Ha a prod front más API bázisra mutat, itt állítsd
-                VITE_API_BASE: http://localhost:8000
-
+                - "0:80"
             backend:
               image: ghcr.io/${{ github.repository }}-backend:latest
               ports:
-                - "8000:8000"
+                - "0:8000"
           YAML
 
       - name: Launch with compose (PROD images)
-        working-directory: ./docker
         run: |
-          docker compose -f docker-compose.yml -f ../docker-compose.ci.override.yml up -d
-          sleep 10
-          docker compose -f docker-compose.yml -f ../docker-compose.ci.override.yml ps
+          docker compose -p "cd_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/docker-compose.ci.override.yml up -d
+          docker compose -p "cd_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/docker-compose.ci.override.yml ps
+          # kis türelem az első induláshoz
+          sleep 5
 
-      - name: Smoke checks (PROD images)
+      - name: Resolve mapped ports
+        id: ports
         run: |
-          # Frontend NGINX (feltételezés: 80-as port -> hoston 5173)
-          curl -sS http://localhost:5173 >/dev/null || (echo "Frontend (prod) not responding" && exit 1)
+          F_HOST_PORT=$(docker compose -p "cd_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/docker-compose.ci.override.yml port frontend 80 | sed 's/.*:\([0-9]\+\)$/\1/')
+          B_HOST_PORT=$(docker compose -p "cd_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/docker-compose.ci.override.yml port backend 8000 | sed 's/.*:\([0-9]\+\)$/\1/')
+          echo "frontend_port=$F_HOST_PORT" >> $GITHUB_OUTPUT
+          echo "backend_port=$B_HOST_PORT" >> $GITHUB_OUTPUT
+          echo "Frontend mapped to: $F_HOST_PORT"
+          echo "Backend  mapped to: $B_HOST_PORT"
 
-          # Backend health
-          if curl -sS http://localhost:8000/healthz >/dev/null; then
-            echo "Backend (prod) health OK"
-          else
-            echo "Figyelem: a backend /health nem elérhető. Ha más endpointod van, módosítsd itt."
-          fi
+      - name: Smoke checks (retry)
+        run: |
+          set -e
+          FRONT=${{ steps.ports.outputs.frontend_port }}
+          BACK=${{ steps.ports.outputs.backend_port }}
+
+          echo "Waiting for PROD images on :$FRONT and :$BACK ..."
+          for i in $(seq 1 60); do
+            FE=0; BE=0
+            curl -fsS "http://127.0.0.1:${FRONT}" >/dev/null && FE=1 || true
+            curl -fsS "http://127.0.0.1:${BACK}/health" >/dev/null && BE=1 || true
+            if [ "$FE" = "1" ] && [ "$BE" = "1" ]; then
+              echo "Both PROD services are up."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "PROD services did not become healthy in time."
+          exit 1
 
       - name: Logs (if failed)
         if: failure()
-        working-directory: ./docker
-        run: docker compose -f docker-compose.yml -f ../docker-compose.ci.override.yml logs --no-color
+        run: |
+          docker compose -p "cd_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/docker-compose.ci.override.yml logs --no-color
 
       - name: Tear down
         if: always()
-        working-directory: ./docker
-        run: docker compose -f docker-compose.yml -f ../docker-compose.ci.override.yml down -v
+        run: |
+          docker compose -p "cd_${{ github.run_id }}" -f $COMPOSE_FILE -f docker/docker-compose.ci.override.yml down -v
