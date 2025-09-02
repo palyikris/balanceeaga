@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  compose-up-smoketest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Show Docker & Compose versions
+        run: |
+          docker version
+          docker compose version
+
+      # A compose DEV környezetet indítjuk (a file-ban a frontend target: dev).
+      - name: Build & start services with docker-compose (DEV)
+        working-directory: ./docker
+        run: |
+          docker compose -f docker-compose.yml up -d --build
+          docker compose -f docker-compose.yml ps
+
+      # Minimális ellenőrzések: frontend dev szerver és backend health
+      - name: Smoke checks
+        run: |
+          # Frontend Vite dev server (5173)
+          curl -sS http://localhost:5173 >/dev/null || (echo "Frontend not responding" && exit 1)
+
+          # Backend health
+          if curl -sS http://localhost:8000/healthz >/dev/null; then
+            echo "Backend health OK"
+          else
+            echo "Figyelem: a backend /health nem elérhető. Ha más endpointod van, módosítsd itt."
+          fi
+
+      - name: Logs (if failed)
+        if: failure()
+        working-directory: ./docker
+        run: docker compose -f docker-compose.yml logs --no-color
+
+      - name: Tear down
+        if: always()
+        working-directory: ./docker
+        run: docker compose -f docker-compose.yml down -v
