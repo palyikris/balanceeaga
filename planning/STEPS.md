@@ -27,11 +27,11 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
   - [x] `docker-compose.yml`: szolgáltatások: `frontend`, `backend`, `db (PostgreSQL)`, `redis`, `worker`
   - [x] Healthcheckek hozzáadása  
 
-- [ ] **CI/CD pipeline**
-  - [ ] GitHub Actions workflow létrehozása: `lint + test + build`
-  - [ ] Backend: pytest futtatása  
-  - [ ] Frontend: `npm run lint` és `npm run build`
-  - [ ] Deploy előkészítés (Fly.io / Railway config)
+- [x] **CI/CD pipeline**
+  - [x] GitHub Actions workflow létrehozása: `lint + test + build`
+  - [] Backend: pytest futtatása  
+  - [] Frontend: `npm run lint` és `npm run build`
+  - [] Deploy előkészítés (Fly.io / Railway config)
 
 - [ ] **Env és secrets kezelés**
   - [ ] `.env.example` létrehozása (DB_URL, JWT_SECRET, REDIS_URL stb.)  
