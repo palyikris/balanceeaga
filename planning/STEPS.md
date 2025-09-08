@@ -44,21 +44,13 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
 **Határidő:** 2025-09-30  
 **Cél:** Biztonságos user kezelés, belépés és jelszó reset megvalósítása.
 
-- [ ] **Backend**
-  - [ ] `users` táblázat + SQLAlchemy modell + Alembic migráció
-  - [ ] JWT auth implementáció (access + refresh token)
-  - [ ] `POST /auth/register` endpoint
-  - [ ] `POST /auth/login` endpoint
-  - [ ] `POST /auth/refresh` endpoint
-  - [ ] `POST /auth/password-reset/request` (email küldése – dummy provider első körben)
-  - [ ] `POST /auth/password-reset/confirm`
+- [x] **Backend**
+  - [] Nem kell mert végül Supabase auth-t és OTP van
 
-- [ ] **Frontend**
-  - [ ] Login és Register oldalak létrehozása (React + Tailwind + shadcn/ui)  
-  - [ ] React Hook Form + Zod integrálása validációhoz  
-  - [ ] JWT token kezelése TanStack Query + Redux Toolkit auth slice segítségével  
-  - [ ] Logout funkció implementálása  
-  - [ ] Alap navigációs menü (bejelentkezve / kijelentkezve)  
+- [x] **Frontend**
+  - [x] Login és OTP validation oldalak létrehozása (React + Tailwind + shadcn/ui)
+  - [x] Logout funkció implementálása  
+  - [x] Alap navigációs menü (bejelentkezve / kijelentkezve)  
 
 ---
 
