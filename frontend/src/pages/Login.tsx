@@ -28,7 +28,7 @@ export default function Login() {
       <div className="rounded-2xl p-8 border border-electric/50 bg-coolgray/70 shadow-[0_0_40px_rgba(0,179,179,.12)]">
         <h1 className="text-2xl font-bold mb-2">Belépés</h1>
         <p className="text-sm text-offwhite/70 mb-6">
-          Add meg az e-mail címedet, küldünk egy egyszeri kódot.
+          Add meg az e-mail címedet, és mi küldünk egy egyszeri kódot.
         </p>
 
         <form onSubmit={onSubmit} className="space-y-4">
