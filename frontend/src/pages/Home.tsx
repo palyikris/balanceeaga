@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [email, setEmail] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setEmail(data.user?.email ?? null);
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) {
+        setEmail(user.email);
+      } else {
+        navigate("/login", { replace: true });
+      }
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="mx-auto max-w-3xl mt-16">

@@ -1,6 +1,94 @@
 /* src/index.css (vagy app.css) */
 @import "tailwindcss";
 
+/* Komponens: „neo” gomb — shimmer sáv + finom lift + neon glow */
+@layer components {
+  .btn-neo {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    will-change: transform, box-shadow, background-position;
+    transition: transform .25s ease, box-shadow .25s ease, opacity .2s ease;
+    background-size: 200% 200%; 
+  }
+  .btn-neo:hover {
+    transform: translateY(-2px);
+    animation: var(--animate-gradient-pan);
+    box-shadow:
+      0 10px 24px rgba(255,60,172,.32), /* neon pink */
+      0 0 40px rgba(163,255,18,.18);    /* lime glow */
+  }
+  /* Shimmer csík (pszeudo-elem) */
+  .btn-neo::after {
+    content: "";
+    position: absolute;
+    top: -20%;
+    bottom: -20%;
+    left: -150%;
+    width: 55%;
+    background: linear-gradient(120deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,.35) 50%,
+      rgba(255,255,255,0) 100%);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    opacity: .6;
+  }
+  .btn-neo:hover::after {
+    animation: shine .9s ease forwards;
+  }
+
+  /* Akadálymentesség: kevesebb mozgás, ha a user kéri */
+  @media (prefers-reduced-motion: reduce) {
+    .btn-neo, .btn-neo:hover { animation: none; transition: none; transform: none; }
+    .btn-neo:hover::after { animation: none; }
+  }
+}
+
+@layer components {
+  .btn-neo-green {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    will-change: transform, box-shadow, background-position;
+    transition: transform .25s ease, box-shadow .25s ease, opacity .2s ease;
+    background-size: 200% 200%; /* a gradientünk tud „pörögni” */
+  }
+  .btn-neo-green:hover {
+    transform: translateY(-2px);
+    animation: var(--animate-gradient-pan);
+    box-shadow:
+      0 10px 24px rgba(163,255,18,.18), /* neon pink */
+      0 0 40px rgba(163,255,18,.18)    /* lime glow */
+  }
+  /* Shimmer csík (pszeudo-elem) */
+  .btn-neo-green::after {
+    content: "";
+    position: absolute;
+    top: -20%;
+    bottom: -20%;
+    left: -150%;
+    width: 55%;
+    background: linear-gradient(120deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,.35) 50%,
+      rgba(255,255,255,0) 100%);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    opacity: .6;
+  }
+  .btn-neo-green:hover::after {
+    animation: shine .9s ease forwards;
+  }
+
+  /* Akadálymentesség: kevesebb mozgás, ha a user kéri */
+  @media (prefers-reduced-motion: reduce) {
+    .btn-neo-green, .btn-neo:hover { animation: none; transition: none; transform: none; }
+    .btn-neo-green:hover::after { animation: none; }
+  }
+}
+
+
 /* === BalanceeAga theme (Tailwind v4 @theme) ===
    A tokenek automatikusan utilitykké válnak: bg-*, text-*, shadow-*, rounded-*, stb.
    Doksi: Theme variables, Namespaces, Breakpoints, Animations. */

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from supabase import create_client
 import os
-from app.api.models.auth import SendLoginEmailIn
+from app.api.models.auth import SendLoginEmailIn, VerifyOTPIn
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -34,3 +34,36 @@ def send_login_email(payload: SendLoginEmailIn):
         )
 
     return {"detail": "Email sent if the user exists."}
+
+
+@router.post("/verify-otp")
+def verify_otp(payload: VerifyOTPIn):
+    """Verifies the OTP token and returns a session if valid."""
+    
+    try:
+        resp = supabase.auth.verify_otp(
+            {
+                "email": payload.email,
+                "token": payload.token,
+                "type": "email",
+            }
+        )
+        
+        return resp
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+        
+@router.post("/logout")
+def logout():
+    """Logs out the current user by clearing the session."""
+    try:
+        resp = supabase.auth.sign_out()
+        return {"detail": "Logged out successfully."}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )

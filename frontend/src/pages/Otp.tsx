@@ -37,18 +37,17 @@ export default function Otp() {
     setStatus("loading");
     setError(null);
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
+      await supabase.auth.verifyOtp({
         email,
-        token: code.trim(),
+        token: code,
         type: "email",
       });
-      if (error) throw error;
-      if (!data?.session) throw new Error("Nincs session a válaszban.");
-      // logged in
       setStatus("ok");
       navigate("/", { replace: true });
-    } catch (err: any) {
-      setError(err.message ?? "Érvénytelen vagy lejárt kód");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Érvénytelen vagy lejárt kód";
+      setError(message);
       setStatus("error");
     }
   }
@@ -64,7 +63,7 @@ export default function Otp() {
 
   return (
     <div className="mx-auto max-w-md mt-16">
-      <div className="rounded-2xl p-8 border border-limeneon/40 bg-coolgray/70 shadow-[0_0_50px_rgba(163,255,18,.15)]">
+      <div className="rounded-2xl p-8 border border-offwhite/15 bg-graphite/60 shadow-[0_0_50px_rgba(163,255,18,.15)]">
         <h1 className="text-2xl font-bold mb-2">Kód megadása</h1>
         <p className="text-sm text-offwhite/70 mb-6">
           {maskedEmail ? (
@@ -83,7 +82,7 @@ export default function Otp() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="w-full px-4 py-3 rounded-lg bg-graphite/70 border border-offwhite/15 focus:border-tealblue outline-none"
+            className="w-full px-4 py-3 rounded-lg bg-graphite/70 border border-offwhite/15 focus:border-limeneon outline-none"
           />
 
           <div className="flex gap-2">
@@ -109,7 +108,7 @@ export default function Otp() {
 
           <button
             disabled={status === "loading"}
-            className="w-full py-3 font-extrabold rounded-lg bg-gradient-to-r from-tealblue to-limeneon text-graphite border border-offwhite/70 hover:opacity-95"
+            className="w-full py-3 font-extrabold rounded-lg bg-gradient-to-r from-limeneon to-tealblue text-graphite border border-offwhite/70 hover:opacity-95 btn-neo-green"
           >
             {status === "loading" ? "Ellenőrzés..." : "Belépek"}
           </button>
@@ -117,7 +116,7 @@ export default function Otp() {
           {status === "ok" && (
             <p className="text-sm text-limeneon mt-2">Sikeres belépés!</p>
           )}
-          {error && <p className="text-sm text-red-400 mt-2">⚠️ {error}</p>}
+          {error && <p className="text-sm text-red-400 mt-2">{error}</p>}
         </form>
 
         <div className="mt-6 text-xs text-offwhite/60">
