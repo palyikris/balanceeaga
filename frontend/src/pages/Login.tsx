@@ -50,7 +50,8 @@ export default function Login() {
 
         {status === "sent" && (
           <div className="mt-4 text-sm">
-            ✅ Ha a fiók létezik, elküldtük a kódot. <br />
+            <span className="text-electric">Kód elküldve! :)</span>
+            <br />
             <a
               className="underline"
               href={`/otp?email=${encodeURIComponent(email)}`}
