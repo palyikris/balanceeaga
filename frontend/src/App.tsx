@@ -1,35 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Outlet, Link } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="min-h-full text-offwhite">
+      <header className="px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <img
+            src="/logo.png"
+            className="h-8 w-8 rounded-lg border border-offwhite/20"
+            alt="logo"
+          />
+          <span className="font-extrabold text-lg">BalanceeAga</span>
+        </div>
+        <nav className="text-sm">
+          <Link to="/login" className="hover:underline">
+            Login
+          </Link>
+        </nav>
+      </header>
+      <main className="px-6">
+        <Outlet />
+      </main>
+    </div>
+  );
 }
-
-export default App

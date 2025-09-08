@@ -28,7 +28,7 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
   - [x] Healthcheckek hozzáadása  
 
 - [ ] **CI/CD pipeline**
-  - [ ] GitHub Actions workflow létrehozása: `lint + test + build`
+  - [x] GitHub Actions workflow létrehozása: `lint + test + build`
   - [ ] Backend: pytest futtatása  
   - [ ] Frontend: `npm run lint` és `npm run build`
   - [ ] Deploy előkészítés (Fly.io / Railway config)
