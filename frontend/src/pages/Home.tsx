@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
+import { BlurFade } from './../components/magicui/blur-fade';
+import { TypingAnimation } from "@/components/magicui/typing-animation";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -13,23 +17,39 @@ export default function Home() {
       } else {
         navigate("/login", { replace: true });
       }
+      setLoading(false);
     });
   }, [navigate]);
 
   return (
     <div className="mx-auto max-w-3xl mt-16">
-      <div className="rounded-2xl p-8 border border-offwhite/15 bg-graphite/60">
-        <h1 className="text-2xl font-bold mb-2">Üdv a BalanceeAga-ban</h1>
-        <p className="text-offwhite/70">
-          {email ? (
-            <>
-              Be vagy jelentkezve mint <b>{email}</b>.
-            </>
+      <BlurFade delay={0.1} direction="left" inView>
+        <div className="rounded-2xl p-8 border border-offwhite/15 bg-graphite/60">
+          <TypingAnimation
+            delay={0.12}
+            className="text-2xl font-bold mb-2"
+            as={"h1"}
+          >
+            Üdv a BalanceeAga-ban! :)
+          </TypingAnimation>
+          {loading ? (
+            <Spinner color="#00B3B3"></Spinner>
           ) : (
-            <>Nem vagy bejelentkezve.</>
+            <p className="text-offwhite/70">
+              {email ? (
+                <>
+                  Be vagy jelentkezve mint{" "}
+                  <b className="text-limeneon">{email.split("@")[0]}</b>
+                  <b className="text-tealblue">@</b>
+                  <b className="text-electric">{email.split("@")[1]}</b>.
+                </>
+              ) : (
+                <>Nem vagy bejelentkezve.</>
+              )}
+            </p>
           )}
-        </p>
-      </div>
+        </div>
+      </BlurFade>
     </div>
   );
 }

@@ -3,9 +3,7 @@ import type { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-
 export default function Header() {
-
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
@@ -14,17 +12,16 @@ export default function Header() {
       setUser(user);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
 
     return () => {
       listener.subscription.unsubscribe();
     };
   }, []);
-
-
-
 
   return (
     <header className="px-6 py-4 flex items-center justify-between">
