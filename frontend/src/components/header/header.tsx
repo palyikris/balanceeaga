@@ -24,7 +24,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="px-6 py-4 flex items-center justify-between">
+    <header className="px-6 py-4 flex items-center justify-between absolute top-0 left-0 w-full z-10">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 border border-tealblue rounded-lg px-2 py-1">
           <div className="h-8 w-8 overflow-hidden rounded-lg flex items-center justify-center">
@@ -42,7 +42,7 @@ export default function Header() {
         </span>
       </div>
       {user && (
-        <nav className="text-sm px-6 flex items-center">
+        <nav className="text-sm px-6 flex items-center gap-8">
           <Link
             to="/"
             className="underline"
@@ -61,7 +61,6 @@ export default function Header() {
                 width: "1.5em",
                 height: "1.5em",
                 verticalAlign: "-0.125em",
-                color: "#A3FF12",
               }}
             >
               <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
@@ -69,8 +68,36 @@ export default function Header() {
             </svg>
             Home
           </Link>
+          <Link
+            to="/import"
+            className="underline"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: ".5em",
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="#FF3CAC"
+              className="size-6"
+              style={{
+                width: "1.5em",
+                height: "1.5em",
+                verticalAlign: "-0.125em",
+              }}
+            >
+              <path
+                fillRule="evenodd"
+                d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V10.5Z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Import
+          </Link>
           <button
-            className="flex items-center w-full py-3 font-extrabold rounded-lg text-limeneon border border-limeneon cursor-pointer btn-neo-green px-6 ml-20 gap-2"
+            className="flex items-center w-full py-3 font-extrabold rounded-lg text-limeneon border border-limeneon cursor-pointer btn-neo-green px-6 ml-10 gap-2"
             onClick={async () => {
               await supabase.auth.signOut();
               console.log("User signed out");

@@ -45,7 +45,7 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
 **Cél:** Biztonságos user kezelés, belépés és jelszó reset megvalósítása.
 
 - [x] **Backend**
-  - [] Nem kell mert végül Supabase auth-t és OTP van
+  - [x] Nem kell mert végül Supabase auth-t és OTP van
 
 - [x] **Frontend**
   - [x] Login és OTP validation oldalak létrehozása (React + Tailwind + shadcn/ui)

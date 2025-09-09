@@ -6,6 +6,7 @@ import App from "./App";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Otp from "./pages/Otp";
+import Import from "./pages/Import";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +15,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
-      { path: "otp", element: <Otp /> }, // ?prefill=XXXXXX támogatás
+      { path: "otp", element: <Otp /> },
+      { path: "import", element: <Import /> },
+      { path: "*", element: <div>404 Not Found</div> },
     ],
   },
 ]);
