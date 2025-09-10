@@ -8,19 +8,9 @@ import {
 } from "@/hooks/use-file-upload"
 import { Button } from "@/components/ui/button"
 
-// Create some dummy initial files
-const initialFiles = [
-  {
-    name: "document.pdf",
-    size: 1528737,
-    type: "application/pdf",
-    url: "https://picsum.photos/1000/800?grayscale&random=1",
-    id: "document.pdf-1744638436563-8u5xuls",
-  },
-]
 
 export default function ImportFileUpload() {
-  const maxSize = 10 * 1024 * 1024 // 10MB default
+  const maxSize = 10 * 1024 * 1024; // 10MB
 
   const [
     { files, isDragging, errors },
@@ -35,10 +25,10 @@ export default function ImportFileUpload() {
     },
   ] = useFileUpload({
     maxSize,
-    initialFiles,
-  })
+    multiple: false,
+  });
 
-  const file = files[0]
+  const file = files[0];
 
   return (
     <div className="flex flex-col gap-2">
@@ -51,7 +41,7 @@ export default function ImportFileUpload() {
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
-        className="border-input hover:bg-accent/50 data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed p-4 transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[input:focus]:ring-[3px]"
+        className="border-input hover:border hover:border-dashed hover:border-tealblue data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed p-4 has-disabled:pointer-events-none has-disabled:opacity-50 has-[input:focus]:ring-[3px] not-[has-disabled]:cursor-pointer transition-all duration-300"
       >
         <input
           {...getInputProps()}
@@ -106,7 +96,7 @@ export default function ImportFileUpload() {
             <Button
               size="icon"
               variant="ghost"
-              className="text-muted-foreground/80 hover:text-foreground -me-2 size-8 hover:bg-transparent"
+              className="text-muted-foreground/80 hover:text-foreground -me-2 size-8 hover:border hover:border-muted-foreground/20 transition-all duration-500"
               onClick={() => removeFile(files[0]?.id)}
               aria-label="Remove file"
             >
@@ -116,5 +106,5 @@ export default function ImportFileUpload() {
         </div>
       )}
     </div>
-  )
+  );
 }

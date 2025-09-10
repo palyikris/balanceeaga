@@ -20,8 +20,8 @@
     transform: translateY(-2px);
     animation: var(--animate-gradient-pan);
     box-shadow:
-      0 10px 24px rgba(255,60,172,.32), /* neon pink */
-      0 0 40px rgba(163,255,18,.18);    /* lime glow */
+      0 10px 24px rgba(255,60,172,.32), 
+      0 0 40px rgba(255,60,172,.32);   
   }
   /* Shimmer csík (pszeudo-elem) */
   .btn-neo::after {

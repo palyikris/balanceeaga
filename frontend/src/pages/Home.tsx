@@ -23,7 +23,7 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-3xl mt-16">
-      <BlurFade delay={0.1} direction="left" inView>
+      <BlurFade delay={0.1} direction="left" inView className="pt-15">
         <div className="rounded-2xl p-8 border border-offwhite/15 bg-graphite/60">
           <TypingAnimation
             delay={0.12}

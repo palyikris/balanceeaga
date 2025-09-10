@@ -69,7 +69,7 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
   - [ ] `GET /imports` – user saját importjai listázva  
 
 - [ ] **Frontend**
-  - [ ] „Import” oldal UI (drag & drop + fájl kiválasztás)  
+  - [x] „Import” oldal UI (drag & drop + fájl kiválasztás)  
   - [ ] Fájl feltöltés integráció  
   - [ ] Import státusz folyamatos lekérdezése (TanStack Query polling)  
   - [ ] Hibák / sikeres import visszajelzés  

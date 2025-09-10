@@ -62,7 +62,7 @@ export default function Otp() {
   }
 
   return (
-    <div className="mx-auto max-w-md mt-16">
+    <div className="mx-auto max-w-md w-full h-[100vh] flex items-center justify-center">
       <div className="rounded-2xl p-8 border border-offwhite/15 bg-graphite/60 shadow-[0_0_50px_rgba(163,255,18,.15)]">
         <h1 className="text-2xl font-bold mb-2">Kód megadása</h1>
         <p className="text-sm text-offwhite/70 mb-6">

@@ -28,7 +28,7 @@ export default function Login() {
   }
 
   return (
-    <div className="mx-auto max-w-md mt-16">
+    <div className="mx-auto max-w-md w-full h-[100vh] flex items-center justify-center">
       <div className="rounded-2xl p-8 border border-offwhite/15 bg-graphite/60 shadow-[0_0_40px_rgba(0,179,179,.12)]">
         <h1 className="text-2xl font-bold mb-2">Belépés</h1>
         <p className="text-sm text-offwhite/70 mb-6">
