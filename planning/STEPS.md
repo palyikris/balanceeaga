@@ -59,14 +59,14 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
 **Cél:** Tranzakciók importálása különböző formátumokból, feldolgozás és státuszkezelés.
 
 - [ ] **Backend**
-  - [ ] `files` táblázat + modell + migráció  
-  - [ ] `POST /imports` endpoint (multipart file upload)  
+  - [x] `files` táblázat + modell + migráció  
+  - [x] `POST /imports` endpoint (multipart file upload)  
   - [ ] Adapter interfész definiálása (CSV, OFX, QIF)  
   - [ ] OTP + Revolut + IBKR parser implementálása  
-  - [ ] Celery task: `parse_import` – fájl feldolgozása és `transactions` táblába írás  
+  - [x] Celery task: `parse_import` – fájl feldolgozása és `transactions` táblába írás  
   - [ ] Deduplication logika (`hash` mező számítása)  
-  - [ ] `GET /imports/{id}` – státusz és hibaüzenetek  
-  - [ ] `GET /imports` – user saját importjai listázva  
+  - [x] `GET /imports/{id}` – státusz és hibaüzenetek  
+  - [x] `GET /imports` – user saját importjai listázva  
 
 - [ ] **Frontend**
   - [x] „Import” oldal UI (drag & drop + fájl kiválasztás)  

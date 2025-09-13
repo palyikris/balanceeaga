@@ -103,6 +103,11 @@ export default function ImportFileUpload() {
               <XIcon className="size-4" aria-hidden="true" />
             </Button>
           </div>
+          <div className="flex justify-center items-center w-full">
+            <button className="flex items-center justify-center w-auto py-3 font-extrabold rounded-lg text-electric border border-electric cursor-pointer btn-neo px-10 gap-2">
+              Upload
+            </button>
+          </div>
         </div>
       )}
     </div>
