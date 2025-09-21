@@ -1,6 +1,7 @@
-import ImportFileUpload from "@/components/import/ImportFileUpload";
+import FirstStep from "@/components/import/first_step/FirstStep";
+import SecondStep from "@/components/import/first_step/SecondStep";
+import ThirdStep from "@/components/import/first_step/ThirdStep";
 import ImportStepper from "@/components/import/ImportStepper";
-import { BlurFade } from "@/components/magicui/blur-fade";
 
 const Import = () => {
   return (
@@ -8,15 +9,11 @@ const Import = () => {
       <ImportStepper
         steps={[1, 2, 3]}
         stepContents={[
-          <BlurFade delay={0.1} direction="left" inView>
-            <ImportFileUpload></ImportFileUpload>
-          </BlurFade>,
-          <p>második lépés</p>,
-          <p>harmadik lépés</p>,
+          <FirstStep></FirstStep>,
+          <SecondStep></SecondStep>,
+          <ThirdStep></ThirdStep>,
         ]}
-      >
-        <p>anyad</p>
-      </ImportStepper>
+      ></ImportStepper>
     </div>
   );
 };
