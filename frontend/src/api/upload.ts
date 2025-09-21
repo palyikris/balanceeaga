@@ -21,7 +21,6 @@ export async function uploadImport({
         const pct = Math.round((evt.loaded * 100) / total);
         onProgress(pct);
       },
-      withCredentials: true,
     }
   );
   return res.data;

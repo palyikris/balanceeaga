@@ -45,7 +45,6 @@ export default function ImportFileUpload() {
     setPct(0);
     setImportId(undefined);
 
-    // opcionális: cancel támogatás
     abortRef.current?.abort();
     abortRef.current = new AbortController();
 
