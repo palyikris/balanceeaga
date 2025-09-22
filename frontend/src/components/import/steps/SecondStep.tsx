@@ -9,13 +9,22 @@ export default function SecondStep() {
   
 
   if (error) {
-    return <div>Error loading latest upload: {error.message}</div>;
+    <BlurFade delay={0.1} direction="right" inView>
+      <div className="w-full flex flex-col items-center justify-center text-red-600">
+        <span className="font-semibold text-lg mb-2">
+          Error loading latest upload
+        </span>
+        <span className="text-sm">{error.message}</span>
+      </div>
+    </BlurFade>;
   }
 
   if (isLoading) {
     return (
       <BlurFade delay={0.1} direction="right" inView>
-        <Spinner color="#00B3B3"></Spinner>
+        <div className="w-full flex items-center justify-center">
+          <Spinner color="#00B3B3"></Spinner>
+        </div>
       </BlurFade>
     );
   }
