@@ -10,6 +10,9 @@ from .serializers import FileImportSerializer
 from .tasks import parse_import_task
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .serializers import ImportUploadSerializer
+from pathlib import Path
+from django.utils.text import get_valid_filename
+import time
 
 
 def sha256sum(path: str) -> str:
@@ -61,9 +64,13 @@ class ImportViewSet(
         if not file:
             return Response({"detail": "No file"}, status=400)
 
-        os.makedirs(settings.MEDIA_ROOT / "imports", exist_ok=True)
-        import_rel = f"imports/{file.name}"
-        full_path = settings.MEDIA_ROOT / import_rel
+        media_root = Path(settings.MEDIA_ROOT)
+        import_dir = media_root / "imports"
+        import_dir.mkdir(parents=True, exist_ok=True)
+
+        safe_name = get_valid_filename(file.name)
+        import_rel = f"imports/{safe_name}"
+        full_path = media_root / import_rel
 
         # név ütközés elkerülés
         base, ext = os.path.splitext(import_rel)
@@ -90,4 +97,16 @@ class ImportViewSet(
         # queue feldolgozásra
         parse_import_task.delay(str(rec.id))
         s = self.get_serializer(rec)
+        time.sleep(2)
         return Response(s.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=["get"], url_path="latest")
+    def latest_import(self, request):
+        uid = "dev-user"
+        print("latest import for", uid)
+        allImport = FileImport.objects.all()
+        latest = allImport.filter(user_id=uid).order_by("-created_at").first()
+        if not latest:
+            return Response({"detail": "No imports found"}, status=404)
+        serializer = self.get_serializer(latest)
+        return Response(serializer.data)

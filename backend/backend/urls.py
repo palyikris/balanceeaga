@@ -25,7 +25,7 @@ from drf_spectacular.views import (
 )
 
 
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash=False)
 router.register(r"imports", ImportViewSet, basename="imports")
 
 urlpatterns = [
