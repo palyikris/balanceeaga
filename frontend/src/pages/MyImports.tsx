@@ -1,14 +1,12 @@
 import UploadedFileCard from "@/components/import/UploadedFileCard";
+import { BlurFade } from "@/components/magicui/blur-fade";
 import Separator from "@/components/ui/Separator";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
-import { useAllUploads } from "@/hooks/useAllUploads"
-
+import { useAllUploads } from "@/hooks/useAllUploads";
 
 export default function MyImports() {
-
-
   const { isLoading, data, error } = useAllUploads();
-  
+
   console.log(data);
 
   if (error) {
@@ -16,7 +14,7 @@ export default function MyImports() {
       <div>
         <p>Unexpected error! Sorry about that :(</p>
       </div>
-    )
+    );
   }
 
   if (isLoading) {
@@ -30,20 +28,26 @@ export default function MyImports() {
   if (data && data.length <= 0) {
     return (
       <div>
-        <p className="text-offwhite/70">No uploads found. Start by importing a file!</p>
+        <p className="text-offwhite/70">
+          No uploads found. Start by importing a file!
+        </p>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="flex w-full justify-center flex-col mx-auto max-w-6xl mt-30 px-4">
+    <div className="flex w-full justify-center flex-col mx-auto max-w-6xl mt-30 px-4 ">
       {data?.map((file, i) => (
         <>
-          <UploadedFileCard key={file.id} file={file} />
+          <BlurFade delay={0.1} direction="right" inView key={file.id}>
+            <UploadedFileCard key={file.id} file={file} />
+          </BlurFade>
           {i < data.length - 1 && (
-            <div className="w-full flex justify-center">
-              <Separator className="my-8" width="w-[40%]"></Separator>
-            </div>
+            <BlurFade delay={0.2} direction="up" inView key={`sep-${i}`}>
+              <div className="w-full flex justify-center">
+                <Separator className="my-8" width="w-[40%]"></Separator>
+              </div>
+            </BlurFade>
           )}
         </>
       ))}
