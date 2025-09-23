@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/stepper";
 import { BlurFade } from "../magicui/blur-fade";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface ImportStepperProps {
   steps: number[];
@@ -26,6 +27,8 @@ export default function ImportStepper(props: ImportStepperProps) {
 
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [isLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -115,7 +118,9 @@ export default function ImportStepper(props: ImportStepperProps) {
           <BlurFade delay={0.3} direction="left" inView>
             <button
               className="flex items-center w-auto py-3 font-extrabold rounded-lg text-tealblue border border-tealblue cursor-pointer btn-neo-green px-6 gap-2 justify-end"
-              onClick={handleNextStep}
+              onClick={() => {
+                navigate("/my-imports");
+              }}
               disabled={currentStep > steps.length}
             >
               Finish uploading

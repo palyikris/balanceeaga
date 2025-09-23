@@ -85,7 +85,7 @@ export default function UploadedFileCard({ file }: { file: UploadedFile | undefi
   const status = statusChip[file.status] ?? statusChip["queued"];
 
   return (
-    <div className="rounded-2xl border border-offwhite/10 bg-graphite/40 p-4 shadow-sm backdrop-blur-sm">
+    <div className="rounded-2xl border border-limeneon/30 bg-graphite/40 p-4 shadow-sm backdrop-blur-sm">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-coolgray/30">

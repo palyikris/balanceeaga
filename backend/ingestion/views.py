@@ -35,7 +35,11 @@ class ImportViewSet(
 
     def get_queryset(self):
         # később Supabase JWT-ből user azonosítás; dev: header vagy query
-        uid = self.request.headers.get("X-User-Id") or self.request.GET.get("user_id")
+        uid = (
+            self.request.headers.get("X-User-Id")
+            or self.request.GET.get("user_id")
+            or "dev-user"
+        )
         qs = super().get_queryset()
         return qs.filter(user_id=uid) if uid else qs.none()
 

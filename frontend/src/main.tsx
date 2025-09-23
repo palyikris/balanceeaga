@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Otp from "./pages/Otp";
 import Import from "./pages/Import";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import MyImports from "./pages/MyImports";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "otp", element: <Otp /> },
       { path: "import", element: <Import /> },
+      { path: "my-imports", element: <MyImports /> },
       { path: "*", element: <div>404 Not Found</div> },
     ],
   },
