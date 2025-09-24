@@ -76,8 +76,6 @@ export default function UploadedFileCard({
 }: {
   file: UploadedFile | undefined;
 }) {
-  console.log("Rendering UploadedFileCard for file:", file);
-
   if (!file) {
     return (
       <div className="rounded-2xl border border-offwhite/10 bg-graphite/40 p-4 shadow-sm backdrop-blur-sm">

@@ -9,14 +9,16 @@ export default function SecondStep() {
   
 
   if (error) {
-    <BlurFade delay={0.1} direction="right" inView>
-      <div className="w-full flex flex-col items-center justify-center text-red-600">
-        <span className="font-semibold text-lg mb-2">
-          Error loading latest upload
-        </span>
-        <span className="text-sm">{error.message}</span>
-      </div>
-    </BlurFade>;
+    return (
+      <BlurFade delay={0.1} direction="right" inView>
+        <div className="w-full flex flex-col items-center justify-center text-red-600">
+          <span className="font-semibold text-lg mb-2">
+            Error loading latest upload
+          </span>
+          <span className="text-sm">{error.message}</span>
+        </div>
+      </BlurFade>
+    );
   }
 
   if (isLoading) {
@@ -29,9 +31,20 @@ export default function SecondStep() {
     );
   }
 
+  if (!data) {
+    return (
+      <BlurFade delay={0.1} direction="right" inView>
+        <div className="w-full flex flex-col items-center justify-center text-offwhite/70">
+          <span className="font-semibold text-lg mb-2">No uploads found</span>
+          <span className="text-sm">Please upload a file to proceed.</span>
+        </div>
+      </BlurFade>
+    );
+  }
+
   return (
     <BlurFade delay={0.1} direction="right" inView>
-      <UploadedFileCard file={data}></UploadedFileCard>
+      <UploadedFileCard file={data} key={data?.id}></UploadedFileCard>
     </BlurFade>
   );
 }

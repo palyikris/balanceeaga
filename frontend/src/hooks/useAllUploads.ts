@@ -8,7 +8,6 @@ export function useAllUploads() {
   return useQuery<UploadedFile[], Error>({
     queryKey: ["all-uploads"],
     queryFn: fetchAllUploads,
-    staleTime: 5 * 60 * 1000, // 5 perc
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     retry: 1,
