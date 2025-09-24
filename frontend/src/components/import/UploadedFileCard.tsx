@@ -59,7 +59,7 @@ const statusChip: Record<
     color: "bg-yellow-500/10 text-yellow-500",
     icon: <Clock3 className="h-4 w-4 animate-spin" />,
   },
-  ready: {
+  parsed: {
     label: "Ready",
     color: "bg-limeneon/10 text-limeneon",
     icon: <CheckCircle2 className="h-4 w-4" />,
@@ -71,8 +71,12 @@ const statusChip: Record<
   },
 };
 
-export default function UploadedFileCard({ file }: { file: UploadedFile | undefined }) {
-
+export default function UploadedFileCard({
+  file,
+}: {
+  file: UploadedFile | undefined;
+}) {
+  console.log("Rendering UploadedFileCard for file:", file);
 
   if (!file) {
     return (

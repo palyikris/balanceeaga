@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { useRef, useState } from "react";
 import { useUploadImport } from "@/hooks/useUploadImport";
 import { useImportStatus } from "@/hooks/useImportStatus";
-
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ImportFileUpload() {
   const maxSize = 10 * 1024 * 1024; // 10MB
@@ -41,6 +41,7 @@ export default function ImportFileUpload() {
 
   const canUpload = Boolean(realFile) && !uploadMutation.isPending;
 
+  const queryClient = useQueryClient();
 
   const startUpload = async () => {
     if (!realFile) return;
@@ -57,6 +58,8 @@ export default function ImportFileUpload() {
         signal: abortRef.current.signal,
       });
       setImportId(res.import_id);
+      await queryClient.invalidateQueries({ queryKey: ["latest-upload"] });
+      await queryClient.invalidateQueries({ queryKey: ["all-uploads"] });
     } catch (e) {
       // hiba UI-t kaphat (toast stb.)
       console.error(e);

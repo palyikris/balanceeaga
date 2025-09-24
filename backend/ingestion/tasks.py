@@ -11,7 +11,7 @@ def parse_import_task(import_id: str):
             fi = FileImport.objects.select_for_update().get(id=import_id)
             fi.status = FileStatus.PROCESSING
             fi.save(update_fields=["status"])
-            time.sleep(5)
+            time.sleep(15)
             # TODO: adapter detektálás + CSV/OFX/QIF parse → transactions mentés
             # Itt egyelőre csak „PARSED”-re állítjuk, mintha sikerült volna.
             fi.status = FileStatus.PARSED

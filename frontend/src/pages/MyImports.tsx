@@ -7,7 +7,6 @@ import { useAllUploads } from "@/hooks/useAllUploads";
 export default function MyImports() {
   const { isLoading, data, error } = useAllUploads();
 
-  console.log(data);
 
   if (error) {
     return (

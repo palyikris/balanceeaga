@@ -10,7 +10,6 @@ import {
   StepperTrigger,
 } from "@/components/ui/stepper";
 import { BlurFade } from "../magicui/blur-fade";
-import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 interface ImportStepperProps {
@@ -30,17 +29,12 @@ export default function ImportStepper(props: ImportStepperProps) {
 
   const navigate = useNavigate();
 
-  const queryClient = useQueryClient();
-
   const handleNextStep = () => {
     // setIsLoading(true);
     // setTimeout(() => {
     //   setCurrentStep((prev) => prev + 1);
     //   setIsLoading(false);
     // }, 1000);
-
-    queryClient.invalidateQueries({ queryKey: ["latest-upload"] });
-    console.log("Invalidated latest-upload query");
 
     setCurrentStep((prev) => prev + 1);
   };
