@@ -4,11 +4,17 @@ import { BlurFade } from "@/components/magicui/blur-fade";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { useLatestUpload } from "@/hooks/useLatestUpload";
 import UploadedFileCard from "../UploadedFileCard";
+import { notify } from "@/toast";
 
 export default function SecondStep() {
   const { data, error, isLoading } = useLatestUpload();
 
-  if (error) {
+  // @ts-expect-error status exists on Error
+  if (error && error.status !== 404) {
+    if (!isLoading) {
+      notify.error("Error loading latest upload!");
+    }
+
     return (
       <BlurFade delay={0.1} direction="right" inView>
         <div className="w-full flex flex-col items-center justify-center text-red-600">
@@ -44,7 +50,11 @@ export default function SecondStep() {
 
   return (
     <BlurFade delay={0.1} direction="right" inView>
-      <UploadedFileCard file={data} key={data?.id}></UploadedFileCard>
+      <UploadedFileCard
+        file={data}
+        key={data?.id}
+        showDelete={false}
+      ></UploadedFileCard>
     </BlurFade>
   );
 }

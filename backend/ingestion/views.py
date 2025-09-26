@@ -104,6 +104,34 @@ class ImportViewSet(
         time.sleep(2)
         return Response(s.data, status=status.HTTP_201_CREATED)
 
+    @extend_schema(
+        summary="Delete an import",
+        description="Deletes a file import by ID.",
+        tags=["imports"],
+        responses={204: None, 404: {"detail": "Not found"}},
+    )
+    def destroy(self, request, pk=None):
+        try:
+            instance = self.get_queryset().get(pk=pk)
+        except FileImport.DoesNotExist:
+            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+        file_path = Path(settings.MEDIA_ROOT) / instance.storage_path
+        if file_path.exists():
+            file_path.unlink()
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=["delete"], url_path="delete_all")
+    def delete_all_imports(self, request):
+        queryset = self.get_queryset()
+        count = queryset.count()
+        for instance in queryset:
+            file_path = Path(settings.MEDIA_ROOT) / instance.storage_path
+            if file_path.exists():
+                file_path.unlink()
+        queryset.delete()
+        return Response({"deleted": count}, status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=["get"], url_path="latest")
     def latest_import(self, request):
         uid = "dev-user"

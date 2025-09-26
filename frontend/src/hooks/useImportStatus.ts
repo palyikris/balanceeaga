@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchImportStatus, type ImportStatus } from "@/api/imports";
+import { fetchImportStatus, type ImportStatus } from "@/api/import/imports";
 
 export function useImportStatus(importId?: string) {
   const enabled = Boolean(importId);

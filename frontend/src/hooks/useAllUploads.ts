@@ -1,10 +1,8 @@
-import { fetchAllUploads } from "@/api/fetchAllUploads";
+import { fetchAllUploads } from "@/api/import/fetchAllUploads";
 import { type UploadedFile } from "@/types/uploadedFile";
 import { useQuery } from "@tanstack/react-query";
 
-
 export function useAllUploads() {
-
   return useQuery<UploadedFile[], Error>({
     queryKey: ["all-uploads"],
     queryFn: fetchAllUploads,
@@ -13,5 +11,4 @@ export function useAllUploads() {
     retry: 1,
     retryDelay: 10000,
   });
-
 }

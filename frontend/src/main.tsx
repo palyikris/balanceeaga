@@ -10,6 +10,7 @@ import Import from "./pages/Import";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MyImports from "./pages/MyImports";
 import { Toaster } from "sonner";
+import ErrorPage from "./components/Error";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,20 @@ const router = createBrowserRouter([
       { path: "otp", element: <Otp /> },
       { path: "import", element: <Import /> },
       { path: "my-imports", element: <MyImports /> },
-      { path: "*", element: <div>404 Not Found</div> },
+      {
+        path: "*",
+        element: (
+          <ErrorPage
+            code={404}
+            title="Where did you wander off to?"
+            message="We can't seem to find the page you're looking for. It might have disappeared or never existed."
+            details={`Timestamp: ${new Date().toISOString()}\nRoute: /analytics\nUser: dev-user`}
+            onRetry={() => window.location.reload()}
+            homeHref="/"
+            requestId={crypto.randomUUID()}
+          />
+        ),
+      },
     ],
   },
 ]);

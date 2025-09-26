@@ -1,13 +1,8 @@
-import { fetchLatestUpload } from "@/api/latestUpload";
+import { fetchLatestUpload } from "@/api/import/latestUpload";
 import type { UploadedFile } from "@/types/uploadedFile";
 import { useQuery } from "@tanstack/react-query";
 
-
-
 export function useLatestUpload() {
-
-  console.log("useLatestUpload called");
-
   return useQuery<UploadedFile, Error>({
     queryKey: ["latest-upload"],
     queryFn: () => fetchLatestUpload(),
