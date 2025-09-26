@@ -11,6 +11,7 @@ import { useRef, useState } from "react";
 import { useUploadImport } from "@/hooks/useUploadImport";
 import { useImportStatus } from "@/hooks/useImportStatus";
 import { useQueryClient } from "@tanstack/react-query";
+import { notify } from "@/lib/toast";
 
 export default function ImportFileUpload() {
   const maxSize = 10 * 1024 * 1024; // 10MB
@@ -42,6 +43,7 @@ export default function ImportFileUpload() {
   const canUpload = Boolean(realFile) && !uploadMutation.isPending;
 
   const queryClient = useQueryClient();
+  queryClient.prefetchQuery({ queryKey: ["latest-upload"] });
 
   const startUpload = async () => {
     if (!realFile) return;
@@ -58,11 +60,15 @@ export default function ImportFileUpload() {
         signal: abortRef.current.signal,
       });
       setImportId(res.import_id);
-      await queryClient.invalidateQueries({ queryKey: ["latest-upload"] });
-      await queryClient.invalidateQueries({ queryKey: ["all-uploads"] });
+      await queryClient.refetchQueries({
+        queryKey: ["latest-upload"],
+        type: "all",
+      });
+
+      notify.success("File uploaded successfully!");
     } catch (e) {
-      // hiba UI-t kaphat (toast stb.)
       console.error(e);
+      notify.error("Failed to upload file!");
     }
   };
 

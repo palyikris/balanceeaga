@@ -13,7 +13,6 @@ export function useLatestUpload() {
     queryFn: () => fetchLatestUpload(),
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    refetchOnMount: false,
     retry: 1,
     retryDelay: 2000,
   });

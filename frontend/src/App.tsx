@@ -4,15 +4,15 @@ import { DotPattern } from "@/components/magicui/dot-pattern";
 
 export default function App() {
   return (
-    <div className="min-h-full text-offwhite">
+    <div className="min-h-full text-offwhite overflow-hidden">
       <Header></Header>
       <main className="px-6">
         <Outlet />
         <div
-          className="w-full h-[100vh] absolute -z-1 top-0 left-0 bg-app"
+          className="w-full min-h-[100vh] absolute -z-1 top-0 left-0 bg-app overflow-hidden"
           id="dot-pattern"
         >
-          <DotPattern className="w-full h-[100vh] opacity-20"></DotPattern>
+          <DotPattern className="w-full min-h-[100vh] opacity-20"></DotPattern>
         </div>
       </main>
     </div>

@@ -3,14 +3,16 @@ import { BlurFade } from "@/components/magicui/blur-fade";
 import Separator from "@/components/ui/Separator";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { useAllUploads } from "@/hooks/useAllUploads";
+import { notify } from "@/lib/toast";
 
 export default function MyImports() {
   const { isLoading, data, error } = useAllUploads();
 
-
   if (error) {
+    notify.error("Error loading uploads!");
+
     return (
-      <div>
+      <div className="flex w-full justify-center items-center h-[100vh]">
         <p>Unexpected error! Sorry about that :(</p>
       </div>
     );
@@ -18,7 +20,7 @@ export default function MyImports() {
 
   if (isLoading) {
     return (
-      <div>
+      <div className="flex w-full justify-center items-center h-[100vh]">
         <Spinner color="#00B3B3"></Spinner>
       </div>
     );
@@ -26,7 +28,7 @@ export default function MyImports() {
 
   if (data && data.length <= 0) {
     return (
-      <div>
+      <div className="flex w-full justify-center items-center h-[100vh]">
         <p className="text-offwhite/70">
           No uploads found. Start by importing a file!
         </p>
@@ -35,9 +37,9 @@ export default function MyImports() {
   }
 
   return (
-    <div className="flex w-full justify-center flex-col mx-auto max-w-6xl mt-30 px-4 ">
+    <div className="flex w-full justify-start flex-col mx-auto max-w-7xl mt-30 px-4 overflow-scroll max-h-[80vh] overflow-x-hidden pb-6">
       {data?.map((file, i) => (
-        <>
+        <div>
           <BlurFade delay={0.1} direction="right" inView key={file.id}>
             <UploadedFileCard key={file.id} file={file} />
           </BlurFade>
@@ -48,7 +50,7 @@ export default function MyImports() {
               </div>
             </BlurFade>
           )}
-        </>
+        </div>
       ))}
     </div>
   );

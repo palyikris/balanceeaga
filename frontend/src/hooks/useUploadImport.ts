@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { uploadImport, type UploadResponse } from "@/api/imports";
+import { notify } from "@/lib/toast";
 
 export function useUploadImport() {
   return useMutation<
@@ -13,5 +14,9 @@ export function useUploadImport() {
   >({
     mutationFn: ({ file, onProgress, signal }) =>
       uploadImport(file, onProgress, signal),
+    onError: (error) => {
+      console.error("Upload failed:", error);
+      notify.error("Upload failed! Try again later.");
+    },
   });
 }

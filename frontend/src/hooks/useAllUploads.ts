@@ -11,7 +11,7 @@ export function useAllUploads() {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     retry: 1,
-    retryDelay: 2000,
+    retryDelay: 10000,
   });
 
 }

@@ -279,3 +279,38 @@ body { @apply bg-app text-offwhite font-sans; }
     @apply bg-background text-foreground;
   }
 }
+
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Graphite */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #FF3CAC, /* Electric Pink */
+    #A3FF12  /* Lime Neon */
+  );
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    #A3FF12, /* Lime Neon */
+    #00B3B3  /* Teal Blue */
+  );
+}
+
+/* Firefox támogatás */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #FF3CAC transparent;
+}
+
