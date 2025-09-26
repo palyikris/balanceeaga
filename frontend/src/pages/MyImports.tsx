@@ -3,7 +3,7 @@ import { BlurFade } from "@/components/magicui/blur-fade";
 import Separator from "@/components/ui/Separator";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { useAllUploads } from "@/hooks/useAllUploads";
-import { notify } from "@/lib/toast";
+import { notify } from "@/toast";
 
 export default function MyImports() {
   const { isLoading, data, error } = useAllUploads();

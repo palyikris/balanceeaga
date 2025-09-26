@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { uploadImport, type UploadResponse } from "@/api/imports";
-import { notify } from "@/lib/toast";
+import { notify } from "@/toast";
 
 export function useUploadImport() {
   return useMutation<
