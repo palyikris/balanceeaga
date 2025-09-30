@@ -13,7 +13,6 @@ def parse_import_task(import_id: str):
             fi.save(update_fields=["status"])
             time.sleep(15)
             # TODO: adapter detektálás + CSV/OFX/QIF parse → transactions mentés
-            # Itt egyelőre csak „PARSED”-re állítjuk, mintha sikerült volna.
             fi.status = FileStatus.PARSED
             fi.save(update_fields=["status"])
     except Exception as e:
