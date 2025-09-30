@@ -1,9 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import { supabase } from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
-import { BlurFade } from './../components/magicui/blur-fade';
+import { BlurFade } from "./../components/magicui/blur-fade";
 import { TypingAnimation } from "@/components/magicui/typing-animation";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import AppLinks from "@/components/home/Applinks";
+
+export interface Applink {
+  name: string;
+  href: string;
+  description: string;
+  icon: ReactElement;
+}
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -22,7 +30,7 @@ export default function Home() {
   }, [navigate]);
 
   return (
-    <div className="mx-auto max-w-3xl mt-16">
+    <div className="mx-auto max-w-3xl mt-16 overflow-hidden max-h-[90vh]">
       <BlurFade delay={0.1} direction="left" inView className="pt-15">
         <div className="rounded-2xl p-8 border border-offwhite/15 bg-graphite/60">
           <TypingAnimation
@@ -50,6 +58,7 @@ export default function Home() {
           )}
         </div>
       </BlurFade>
+      <AppLinks></AppLinks>
     </div>
   );
 }
