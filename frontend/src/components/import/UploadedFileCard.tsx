@@ -71,8 +71,8 @@ const statusChip: Record<
     color: "bg-limeneon/10 text-limeneon",
     icon: <CheckCircle2 className="h-4 w-4" />,
   },
-  error: {
-    label: "Error",
+  failed: {
+    label: "Failed",
     color: "bg-red-500/10 text-red-400",
     icon: <AlertTriangle className="h-4 w-4" />,
   },

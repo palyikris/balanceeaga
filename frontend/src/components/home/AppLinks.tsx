@@ -98,7 +98,7 @@ export default function AppLinks() {
   ];
 
   return (
-    <div className="mt-8 flex flex-wrap justify-between items-start overflow-scroll gap-4 max-h-[50vh] overflow-x-hidden pb-8 px-4">
+    <div className="mt-8 flex flex-wrap justify-start items-start overflow-scroll gap-6 max-h-[50vh] overflow-x-hidden pb-8 px-4">
       {appLinks.map((link, index) => {
         return (
           <BlurFade
@@ -106,7 +106,7 @@ export default function AppLinks() {
             delay={0.1 + index * 0.1}
             direction="up"
             inView
-            className="mt-8"
+            className=""
           >
             <HomeCard applink={link} key={index}></HomeCard>
           </BlurFade>

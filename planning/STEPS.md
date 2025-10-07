@@ -70,9 +70,9 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
 
 - [ ] **Frontend**
   - [x] „Import” oldal UI (drag & drop + fájl kiválasztás)  
-  - [ ] Fájl feltöltés integráció  
-  - [ ] Import státusz folyamatos lekérdezése (TanStack Query polling)  
-  - [ ] Hibák / sikeres import visszajelzés  
+  - [x] Fájl feltöltés integráció  
+  - [x] Import státusz folyamatos lekérdezése (TanStack Query polling)  
+  - [x] Hibák / sikeres import visszajelzés  
 
 ---
 
