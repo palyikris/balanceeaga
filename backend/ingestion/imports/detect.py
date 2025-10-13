@@ -13,6 +13,9 @@ def detect_profile(raw_bytes: bytes) -> str:
     Csak OTP és Revolut CSV fájlokat ismer fel.
     Ha egyikre sem illik, UnknownProfileError-t dob.
     """
+
+    print("Detecting profile...")
+
     text = raw_bytes.decode("utf-8-sig", errors="ignore")
     first_2kb = text[:2048].lower()
 
@@ -50,6 +53,8 @@ def detect_profile(raw_bytes: bytes) -> str:
         return "Revolut"
     if "könyvelés dátuma" in first_2kb or "értéknap" in first_2kb:
         return "OTP"
+
+    print("Nem sikerült profil detektálás.")
 
     raise UnknownProfileError(
         "Ismeretlen vagy nem támogatott profil (csak OTP és Revolut CSV támogatott)."

@@ -3,6 +3,7 @@ import io
 from decimal import Decimal
 from datetime import datetime
 from uuid import UUID
+from ingestion.models import Transaction
 
 
 class BaseCsvAdapter:
@@ -25,3 +26,10 @@ class BaseCsvAdapter:
             except Exception:
                 continue
         return None
+
+    def bulk_insert(self, transactions: list[dict]):
+        if not transactions:
+            return []
+        objs = [Transaction(**t) for t in transactions]
+        Transaction.objects.bulk_create(objs, ignore_conflicts=True)
+        return objs
