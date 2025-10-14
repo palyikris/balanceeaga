@@ -81,7 +81,7 @@ export default function TransactionDetailPage() {
       </div>
 
       {/* Category edit section */}
-      <div className="mt-6">
+      <BlurFade className="mt-6" inView delay={0.5} direction="up">
         <p className="text-offwhite/70 mb-2">Category</p>
         <div className="flex gap-3 items-center">
           <Select
@@ -108,17 +108,15 @@ export default function TransactionDetailPage() {
             {tx.category ? "Update" : "Add"} Category
           </Button>
         </div>
-      </div>
+      </BlurFade>
 
       {/* Delete button */}
-      <div className="mt-8 flex justify-between items-center">
-        <Button
-          onClick={handleDelete}
-          disabled={deleteTx.isPending}
-          className="bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20"
-        >
-          Delete Transaction
-        </Button>
+      <BlurFade
+        className="mt-8 flex justify-between items-center"
+        inView
+        delay={0.6}
+        direction="up"
+      >
         <Button
           variant="secondary"
           onClick={() => navigate("/transactions")}
@@ -126,7 +124,14 @@ export default function TransactionDetailPage() {
         >
           Back to Transactions
         </Button>
-      </div>
+        <Button
+          onClick={handleDelete}
+          disabled={deleteTx.isPending}
+          className="bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20"
+        >
+          Delete Transaction
+        </Button>
+      </BlurFade>
     </Card>
   );
 }

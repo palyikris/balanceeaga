@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import FileImport
-from ingestion.models import Category, Transaction
+from ingestion.models import Category, Transaction, Rule
 
 class FileImportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,3 +42,22 @@ class TransactionSerializer(serializers.ModelSerializer):
             "counterparty",
             "category",
         ]
+
+
+class RuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rule
+        fields = [
+            "id",
+            "user_id",
+            "name",
+            "priority",
+            "enabled",
+            "match_type",
+            "match_value",
+            "action_set_category",
+            "action_mark_transfer",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ("id", "created_at", "updated_at")

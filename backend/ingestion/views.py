@@ -14,6 +14,10 @@ from pathlib import Path
 from django.utils.text import get_valid_filename
 import time
 from ingestion.models import Transaction
+from .models import Rule
+from .serializers import RuleSerializer
+from .models import Category
+from .serializers import CategorySerializer
 
 
 def sha256sum(path: str) -> str:
@@ -188,3 +192,29 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class RuleViewSet(viewsets.ModelViewSet):
+    queryset = Rule.objects.all().order_by("-id")
+    serializer_class = RuleSerializer
+
+    def get_queryset(self):
+        user_id = (
+            self.request.headers.get("X-User-Id")
+            or self.request.GET.get("user_id")
+            or "dev-user"
+        )
+        return Rule.objects.filter(user_id=user_id).order_by("-id")
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all().order_by("-id")
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        user_id = (
+            self.request.headers.get("X-User-Id")
+            or self.request.GET.get("user_id")
+            or "dev-user"
+        )
+        return Category.objects.filter(user_id=user_id).order_by("-id")

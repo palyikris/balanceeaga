@@ -30,7 +30,7 @@ export default function Home() {
   }, [navigate]);
 
   return (
-    <div className="mx-auto max-w-6xl mt-16 overflow-hidden max-h-[90vh]">
+    <div className="mx-auto max-w-6xl mt-16 max-h-[90vh]">
       <BlurFade delay={0.1} direction="left" inView className="pt-15">
         <div className="rounded-2xl p-8 border border-offwhite/15 bg-graphite/60">
           <TypingAnimation

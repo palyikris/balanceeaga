@@ -17,7 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from ingestion.views import ImportViewSet, TransactionViewSet
+from ingestion.views import (
+    ImportViewSet,
+    TransactionViewSet,
+    RuleViewSet,
+    CategoryViewSet,
+)
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
@@ -28,6 +33,8 @@ from drf_spectacular.views import (
 router = DefaultRouter(trailing_slash=False)
 router.register(r"imports", ImportViewSet, basename="imports")
 router.register(r"transactions", TransactionViewSet, basename="transactions")
+router.register(r"rules", RuleViewSet, basename="rules")
+router.register(r"categories", CategoryViewSet, basename="categories")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

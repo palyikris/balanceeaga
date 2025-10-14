@@ -13,6 +13,8 @@ import { Toaster } from "sonner";
 import ErrorPage from "./components/Error";
 import Transactions from "./pages/Transactions";
 import TransactionDetailPage from "./pages/TransactionDetail";
+import CategoriesPage from "./pages/Category";
+import RulesPage from "./pages/Rules";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +28,15 @@ const router = createBrowserRouter([
       { path: "my-imports", element: <MyImports /> },
       { path: "transactions", element: <Transactions /> },
       { path: "transactions/:id", element: <TransactionDetailPage /> },
+      {
+        path: "/categories",
+        element: <CategoriesPage />,
+      },
+      {
+        path: "/rules",
+        element: <RulesPage />,
+      },
+
       {
         path: "*",
         element: (

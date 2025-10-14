@@ -48,8 +48,8 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
               <td
                 className={`p-2 font-medium ${
                   !tx.amount.startsWith("-")
-                    ? "text-limeneon/70"
-                    : "text-electric/70"
+                    ? "text-limeneon/90"
+                    : "text-electric/90"
                 }`}
               >
                 <BlurFade inView delay={i * 0.2}>
@@ -101,7 +101,12 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
           ))}
         <tr>
           <td colSpan={5} className="p-4">
-            <div className="flex justify-center gap-4">
+            <BlurFade
+              className="flex justify-center gap-4"
+              inView
+              delay={1}
+              direction="up"
+            >
               <button
                 className="px-4 py-2 bg-limeneon/10 text-limeneon rounded disabled:opacity-50 w-xs cursor-pointer"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -151,7 +156,7 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
               >
                 Next
               </button>
-            </div>
+            </BlurFade>
           </td>
         </tr>
       </tbody>

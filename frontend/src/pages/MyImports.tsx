@@ -49,7 +49,7 @@ export default function MyImports() {
   }
 
   return (
-    <div className="flex w-full justify-start flex-col mx-auto max-w-7xl mt-30 px-4 overflow-scroll max-h-[80vh] overflow-x-hidden pb-6 relative">
+    <div className="flex w-full justify-start flex-col mx-auto max-w-7xl mt-30 pb-6 relative">
       <div className="flex flex-row gap-4 sticky top-4 right-4">
         <button
           className="flex flex-row justify-center items-center gap-4 border border-limeneon py-2 px-4 rounded-md mb-8 hover:bg-limeneon/10 transition-colors cursor-pointer"
