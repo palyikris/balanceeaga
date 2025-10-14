@@ -166,3 +166,25 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(category_id=category_id)
 
         return qs
+
+    @extend_schema(
+        summary="Delete a transaction.",
+        description="Deletes a transaction by ID.",
+        responses={204: None, 404: {"detail": "Not found"}},
+    )
+    def destroy(self, request, pk=None):
+        try:
+            instance = self.get_queryset().get(pk=pk)
+        except Transaction.DoesNotExist:
+            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["get"], url_path="get")
+    def get_transaction(self, request, pk=None):
+        try:
+            instance = self.get_queryset().get(pk=pk)
+        except Transaction.DoesNotExist:
+            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

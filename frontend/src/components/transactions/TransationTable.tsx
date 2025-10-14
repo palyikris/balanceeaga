@@ -3,28 +3,27 @@
 import type { Transaction } from "@/types/transaction";
 import { BlurFade } from "../magicui/blur-fade";
 import { useState } from "react";
-
-
-
+import { useQueryClient } from "@tanstack/react-query";
+import { useDeleteTransaction } from "@/hooks/transactions/useDeleteTransaction";
+import { useNavigate } from "react-router-dom";
 
 interface DataTableProps {
   data?: Transaction[];
 }
 
 export default function TransactionTable({ data = [] }: DataTableProps) {
-
-  const step = 3
+  const [step, setStep] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   return (
     <table className="w-full text-left border-collapse">
       <thead>
-        <tr className="border-b border-electric text-sm text-offwhite/80">
+        <tr className="border-b border-tealblue text-sm text-offwhite/80">
           <th className="p-2">Date</th>
           <th className="p-2">Description</th>
           <th className="p-2">Amount</th>
           <th className="p-2">Category</th>
-          <th className="p-2">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -33,9 +32,10 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
           .map((tx: Transaction, i) => (
             <tr
               key={tx.id}
-              className="border-b border-gray-800 hover:bg-gray-800/40 text-offwhite/50"
+              className="border-b border-gray-800 hover:bg-gray-800/40 text-offwhite/50 cursor-pointer"
+              onClick={() => navigate(`/transactions/${tx.id}`)}
             >
-              <td className="p-2">
+              <td className="p-2 py-3">
                 <BlurFade inView delay={i * 0.2}>
                   {tx.booking_date}
                 </BlurFade>
@@ -45,7 +45,13 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
                   {tx.description_raw}
                 </BlurFade>
               </td>
-              <td className="p-2 font-medium">
+              <td
+                className={`p-2 font-medium ${
+                  !tx.amount.startsWith("-")
+                    ? "text-limeneon/70"
+                    : "text-electric/70"
+                }`}
+              >
                 <BlurFade inView delay={i * 0.2}>
                   {tx.amount} {tx.currency}
                 </BlurFade>
@@ -55,7 +61,7 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
                   {tx.category?.name || "-"}
                 </BlurFade>
               </td>
-              <td className="p-2 flex flex-row gap-2">
+              {/* <td className="p-2 flex flex-row gap-2">
                 {!tx.category && (
                   <BlurFade inView delay={i * 0.2}>
                     <button className="hover:bg-limeneon/10 p-4 rounded-lg transition-colors cursor-pointer">
@@ -75,7 +81,7 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
                   </BlurFade>
                 )}
                 <BlurFade inView delay={i * 0.2}>
-                  <button className="hover:bg-electric/10 p-4 rounded-lg transition-colors cursor-pointer">
+                  <button className="hover:bg-electric/10 p-4 rounded-lg transition-colors cursor-pointer" onClick={}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -90,21 +96,52 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
                     </svg>
                   </button>
                 </BlurFade>
-              </td>
+              </td> */}
             </tr>
           ))}
         <tr>
           <td colSpan={5} className="p-4">
             <div className="flex justify-center gap-4">
               <button
-                className="px-4 py-2 bg-limeneon/10 text-limeneon rounded disabled:opacity-50"
+                className="px-4 py-2 bg-limeneon/10 text-limeneon rounded disabled:opacity-50 w-xs cursor-pointer"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
                 Previous
               </button>
+              <input
+                type="text"
+                onChange={(e) => {
+                  const step = parseInt(e.target.value);
+                  if (!isNaN(step) && step > 0) {
+                    setStep(step);
+                    setCurrentPage(1);
+                  }
+                }}
+                className="w-16 text-center bg-graphite-900 border border-coolgray rounded text-offwhite outline-none"
+                value={step}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    setStep((prev) => {
+                      const next = prev + 1;
+                      setCurrentPage(1);
+                      return next;
+                    });
+                  }
+
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setStep((prev) => {
+                      const next = Math.max(prev - 1, 1);
+                      setCurrentPage(1);
+                      return next;
+                    });
+                  }
+                }}
+              />
               <button
-                className="px-4 py-2 bg-limeneon/10 text-limeneon rounded disabled:opacity-50"
+                className="px-4 py-2 bg-limeneon/10 text-limeneon rounded disabled:opacity-50 w-xs cursor-pointer"
                 onClick={() =>
                   setCurrentPage((prev) =>
                     prev * step >= data.length ? prev : prev + 1

@@ -12,6 +12,7 @@ import MyImports from "./pages/MyImports";
 import { Toaster } from "sonner";
 import ErrorPage from "./components/Error";
 import Transactions from "./pages/Transactions";
+import TransactionDetailPage from "./pages/TransactionDetail";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
       { path: "import", element: <Import /> },
       { path: "my-imports", element: <MyImports /> },
       { path: "transactions", element: <Transactions /> },
+      { path: "transactions/:id", element: <TransactionDetailPage /> },
       {
         path: "*",
         element: (
