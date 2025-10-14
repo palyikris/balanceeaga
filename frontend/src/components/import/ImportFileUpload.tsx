@@ -2,14 +2,11 @@
 
 import { AlertCircleIcon, PaperclipIcon, UploadIcon, XIcon } from "lucide-react"
 
-import {
-  formatBytes,
-  useFileUpload,
-} from "@/hooks/use-file-upload"
-import { Button } from "@/components/ui/button"
+import { formatBytes, useFileUpload } from "@/hooks/import/use-file-upload";
+import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
-import { useUploadImport } from "@/hooks/useUploadImport";
-import { useImportStatus } from "@/hooks/useImportStatus";
+import { useUploadImport } from "@/hooks/import/useUploadImport";
+import { useImportStatus } from "@/hooks/import/useImportStatus";
 import { useQueryClient } from "@tanstack/react-query";
 import { notify } from "@/toast";
 

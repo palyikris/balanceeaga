@@ -9,10 +9,11 @@ from .models import FileImport, FileStatus
 from .serializers import FileImportSerializer
 from .tasks import parse_import_task
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from .serializers import ImportUploadSerializer
+from .serializers import ImportUploadSerializer, TransactionSerializer
 from pathlib import Path
 from django.utils.text import get_valid_filename
 import time
+from ingestion.models import Transaction
 
 
 def sha256sum(path: str) -> str:
@@ -56,7 +57,6 @@ class ImportViewSet(
         ],
         summary="Fájl import indítása",
         description="CSV/OFX/QIF fájl feltöltése és feldolgozásra küldése.",
-        tags=["imports"],
     )
     def create(self, request, *args, **kwargs):
         file = request.FILES.get("file")
@@ -107,7 +107,6 @@ class ImportViewSet(
     @extend_schema(
         summary="Delete an import",
         description="Deletes a file import by ID.",
-        tags=["imports"],
         responses={204: None, 404: {"detail": "Not found"}},
     )
     def destroy(self, request, pk=None):
@@ -142,3 +141,28 @@ class ImportViewSet(
             return Response({"detail": "No imports found"}, status=404)
         serializer = self.get_serializer(latest)
         return Response(serializer.data)
+
+
+class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        user_id = (
+            self.request.headers.get("X-User-Id")
+            or self.request.GET.get("user_id")
+            or "dev-user"
+        )
+        qs = Transaction.objects.filter(user_id=user_id).order_by("-booking_date")
+
+        date_from = self.request.query_params.get("date_from")
+        date_to = self.request.query_params.get("date_to")
+        category_id = self.request.query_params.get("category_id")
+
+        if date_from:
+            qs = qs.filter(booking_date__gte=date_from)
+        if date_to:
+            qs = qs.filter(booking_date__lte=date_to)
+        if category_id:
+            qs = qs.filter(category_id=category_id)
+
+        return qs

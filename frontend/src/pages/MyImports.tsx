@@ -2,8 +2,8 @@ import UploadedFileCard from "@/components/import/UploadedFileCard";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import Separator from "@/components/ui/Separator";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
-import { useAllUploads } from "@/hooks/useAllUploads";
-import { useDeleteAllUploads } from "@/hooks/useDeleteAllUploads";
+import { useAllUploads } from "@/hooks/import/useAllUploads";
+import { useDeleteAllUploads } from "@/hooks/import/useDeleteAllUploads";
 import { notify } from "@/toast";
 import { useQueryClient } from "@tanstack/react-query";
 

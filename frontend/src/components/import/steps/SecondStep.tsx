@@ -2,7 +2,7 @@
 
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
-import { useLatestUpload } from "@/hooks/useLatestUpload";
+import { useLatestUpload } from "@/hooks/import/useLatestUpload";
 import UploadedFileCard from "../UploadedFileCard";
 import { notify } from "@/toast";
 

@@ -13,7 +13,7 @@ import {
   Clock3,
 } from "lucide-react";
 import type { UploadedFile } from "@/types/uploadedFile";
-import { useDeleteUpload } from "@/hooks/useDeleteUpload";
+import { useDeleteUpload } from "@/hooks/import/useDeleteUpload";
 import { Spinner } from "../ui/shadcn-io/spinner";
 import { useQueryClient } from "@tanstack/react-query";
 

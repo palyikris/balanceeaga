@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MyImports from "./pages/MyImports";
 import { Toaster } from "sonner";
 import ErrorPage from "./components/Error";
+import Transactions from "./pages/Transactions";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { path: "otp", element: <Otp /> },
       { path: "import", element: <Import /> },
       { path: "my-imports", element: <MyImports /> },
+      { path: "transactions", element: <Transactions /> },
       {
         path: "*",
         element: (
