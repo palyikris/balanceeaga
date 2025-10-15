@@ -280,7 +280,6 @@ body { @apply bg-app text-offwhite font-sans; }
   }
 }
 
-
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 10px;

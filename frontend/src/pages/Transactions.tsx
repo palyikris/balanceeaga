@@ -1,19 +1,12 @@
 import { Card } from "@/components/ui/card";
 import TransactionTable from "@/components/transactions/TransationTable";
 import { useAllTransactions } from "@/hooks/transactions/useAllTransactions";
-import { TypingAnimation } from "./../components/magicui/typing-animation";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import dayjs from "dayjs";
 import { useState, useMemo } from "react";
 import type { Transaction } from "@/types/transaction";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import TransactionHeader from "@/components/transactions/TransactionHeader";
+import TransactionSummary from "@/components/transactions/TransactionSummary";
 
 export default function Transactions() {
   const { data, isLoading } = useAllTransactions();
@@ -80,69 +73,19 @@ export default function Transactions() {
 
   return (
     <Card className="flex w-full flex-col mx-auto max-w-7xl mt-30 px-4 overflow-hidden pb-6 relative mb-8 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mt-4">
-        <h2 className="font-bold text-limeneon">
-          <TypingAnimation style={{ fontSize: "1.5rem" }}>
-            Your transactions.
-          </TypingAnimation>
-        </h2>
-        <div className="flex gap-3 items-center">
-          <Input
-            placeholder="Search description or counterparty"
-            className="w-80 bg-graphite-900 border border-offwhite/10 text-offwhite/80"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Select onValueChange={setCategory}>
-            <SelectTrigger className="w-[180px] bg-graphite-900 border border-offwhite/10 text-offwhite/80">
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
-              <SelectItem value="Income">Income</SelectItem>
-              <SelectItem value="Groceries">Groceries</SelectItem>
-              <SelectItem value="Food & Drinks">Food & Drinks</SelectItem>
-              <SelectItem value="Utilities">Utilities</SelectItem>
-              <SelectItem value="Entertainment">Entertainment</SelectItem>
-              <SelectItem value="Shopping">Shopping</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <TransactionHeader
+        search={search}
+        setSearch={setSearch}
+        setCategory={setCategory}
+      ></TransactionHeader>
 
-      {/* Summary section */}
-      <div className="grid grid-cols-3 gap-4 text-sm text-offwhite/70">
-        <Card className="p-4 bg-graphite-900/70 border border-limeneon/20">
-          <p className="text-offwhite/60">Total Income</p>
-          <p className="text-limeneon font-bold text-xl">
-            {totalIncome.toLocaleString("hu-HU")} HUF
-          </p>
-        </Card>
-        <Card className="p-4 bg-graphite-900/70 border border-electric/20">
-          <p className="text-offwhite/60">Total Expense</p>
-          <p className="text-electric font-bold text-xl">
-            {totalExpense.toLocaleString("hu-HU")} HUF
-          </p>
-        </Card>
-        <Card className="p-4 bg-graphite-900/70 border border-offwhite/20">
-          <p className="text-offwhite/60">Balance</p>
-          <p
-            className={`font-bold text-xl ${
-              totalIncome + totalExpense >= 0
-                ? "text-limeneon"
-                : "text-electric"
-            }`}
-          >
-            {(totalIncome + totalExpense).toLocaleString("hu-HU")} HUF
-          </p>
-        </Card>
-      </div>
+      <TransactionSummary
+        totalExpense={totalExpense}
+        totalIncome={totalIncome}
+      ></TransactionSummary>
 
-      {/* Transaction Table (unchanged) */}
       <TransactionTable data={filteredData}></TransactionTable>
 
-      {/* Empty state */}
       {filteredData.length === 0 && (
         <div className="text-center py-8 text-offwhite/50 italic">
           No transactions match your filters.

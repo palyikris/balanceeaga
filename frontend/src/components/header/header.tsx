@@ -27,7 +27,12 @@ export default function Header() {
     <header className="px-6 py-4 flex items-center justify-between absolute top-0 left-0 w-full z-10">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 border border-tealblue rounded-lg px-2 py-1">
-          <div className="h-8 w-8 overflow-hidden rounded-lg flex items-center justify-center">
+          <div
+            className="h-8 w-8 overflow-hidden rounded-lg flex items-center justify-center cursor-pointer"
+            onClick={() => {
+              navigate("/");
+            }}
+          >
             <img
               src="/logo.png"
               className="h-12 w-12 object-cover"
