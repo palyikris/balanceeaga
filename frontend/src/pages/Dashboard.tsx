@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { DefaultRadialChart } from "@/components/ui/radial-chart";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { AnimatedClippedRadarChart } from "@/components/ui/animated-clipped-radar-chart";
+import DashboardSummary from "@/components/dashboard/DashboardSummary";
+import TopMerchant from "@/components/dashboard/TopMerchant";
 
 // Color palette (from COLORS.md)
 const COLORS = {
@@ -55,9 +57,6 @@ export default function DashboardPage() {
     queryFn: fetchTopMerchants,
   });
 
-
-  
-
   if (cashflowLoading || radarLoading || merchLoading)
     return (
       <div className="flex w-full flex-col mx-auto max-w-7xl mt-30 px-4 overflow-hidden pb-6 relative mb-8 space-y-6">
@@ -71,32 +70,8 @@ export default function DashboardPage() {
         Pénzügyi áttekintés
       </h1>
 
-      {/* Summary cards */}
-      <div className="grid md:grid-cols-3 gap-4">
-        <Card className="p-4 bg-graphite-900/70 border border-limeneon/80">
-          <h3 className="text-sm uppercase text-offwhite/70">Bevétel</h3>
-          <p className="text-2xl font-bold text-limeneon">
-            {cashflow?.reduce((s, c) => s + c.income, 0).toLocaleString()} Ft
-          </p>
-        </Card>
-        <Card className="p-4 bg-graphite-900/70 border border-electric/80">
-          <h3 className="text-sm uppercase text-offwhite/70">Kiadás</h3>
-          <p className="text-2xl font-bold text-electric">
-            {cashflow?.reduce((s, c) => s + c.expense, 0).toLocaleString()} Ft
-          </p>
-        </Card>
-        <Card className="p-4 bg-graphite-900/70 border border-tealblue/80">
-          <h3 className="text-sm uppercase text-offwhite/70">Megtakarítás</h3>
-          <p className="text-2xl font-bold text-tealblue">
-            {(
-              cashflow?.reduce((s, c) => s + (c.income - c.expense), 0) ?? 0
-            ).toLocaleString()}{" "}
-            Ft
-          </p>
-        </Card>
-      </div>
+      <DashboardSummary cashflow={cashflow || []}></DashboardSummary>
 
-      {/* Radar chart section */}
       <Card className="bg-graphite/50 p-6">
         <h2 className="text-xl text-offwhite/80 font-bold mb-2">
           Kiadások kategóriák szerint
@@ -104,38 +79,9 @@ export default function DashboardPage() {
         <AnimatedClippedRadarChart size={500} maxHeight="max-h-[500px]" />
       </Card>
 
-      {/* Top merchants */}
       <Card className="flex flex-row justify-center items-center gap-4 bg-transparent p-0 border-none">
-        <Card className="bg-graphite/50 p-6 w-full">
-          <h2 className="text-xl font-bold mb-3 text-offwhite/80">
-            Top kereskedők
-          </h2>
-          <ul className="divide-y divide-tealblue/30">
-            {merchants?.map((m) => (
-              <li key={m.name} className="flex justify-between py-2">
-                <span className="text-offwhite/50">{m.name}</span>
-                <span className="text-limeneon">
-                  {m.amount.toLocaleString()} Ft
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-        <Card className="bg-graphite/50 p-6 w-full">
-          <h2 className="text-xl font-bold mb-3 text-offwhite/80">
-            Top kereskedők
-          </h2>
-          <ul className="divide-y divide-tealblue/30">
-            {merchants?.map((m) => (
-              <li key={m.name} className="flex justify-between py-2">
-                <span className="text-offwhite/50">{m.name}</span>
-                <span className="text-limeneon">
-                  {m.amount.toLocaleString()} Ft
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Card>
+        <TopMerchant merchants={merchants || []}></TopMerchant>
+        <TopMerchant merchants={merchants || []}></TopMerchant>
       </Card>
     </div>
   );

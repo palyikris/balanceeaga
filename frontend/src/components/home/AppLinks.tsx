@@ -135,7 +135,7 @@ export default function AppLinks() {
   ];
 
   return (
-    <div className="mt-8 flex flex-wrap justify-start items-start overflow-scroll gap-6 max-h-[50vh] overflow-x-hidden pb-8 px-4">
+    <div className="mt-8 flex flex-wrap justify-center items-center gap-6 pb-8">
       {appLinks.map((link, index) => {
         return (
           <BlurFade

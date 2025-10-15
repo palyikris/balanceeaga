@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSpring, useMotionValueEvent } from "motion/react";
+import { BlurFade } from "../magicui/blur-fade";
 
 const colors = {
   graphite: "#1C1C1C",
@@ -48,9 +49,9 @@ interface AnimatedClippedRadarChartProps {
   maxHeight?: string; // Max height class (default: "max-h-[400px]")
 }
 
-export function AnimatedClippedRadarChart({ 
-  size = 400, 
-  maxHeight = "max-h-[400px]" 
+export function AnimatedClippedRadarChart({
+  size = 400,
+  maxHeight = "max-h-[400px]",
 }: AnimatedClippedRadarChartProps) {
   const [currentAngle, setCurrentAngle] = useState(0);
   const [hoveredValue, setHoveredValue] = useState(0);
@@ -65,11 +66,11 @@ export function AnimatedClippedRadarChart({
   useEffect(() => {
     if (!hasAnimated) {
       springAngle.set(360);
-          springValue.set(chartData[chartData.length - 1].desktop);
+      springValue.set(chartData[chartData.length - 1].desktop);
       setHasAnimated(true);
     }
   }, [hasAnimated, springAngle, springValue]);
- 
+
   // Calculate center and radius based on size
   const centerX = size / 2;
   const centerY = size / 2;
@@ -80,18 +81,20 @@ export function AnimatedClippedRadarChart({
 
   return (
     <Card className="border-none bg-transparent">
-      <CardHeader className="items-center pb-4 border-l border-electric/80 p-4 max-w-md">
-        <CardTitle>
-          {Math.round(hoveredValue)}
-          <Badge variant="secondary" className="ml-2 bg-limeneon" color={colors.limeneon}>
-            <TrendingDown className="h-4 w-4" />
-            <span>-5.2%</span>
-          </Badge>
-        </CardTitle>
-        <CardDescription>
-          Animated clipped radar chart - Total visitors for the last 6 months
-        </CardDescription>
-      </CardHeader>
+      <BlurFade className="w-full" inView delay={0.2} direction="right">
+        <CardHeader className="items-center pb-4 border-l border-electric/80 p-4 max-w-md">
+          <CardTitle>
+            {Math.round(hoveredValue)}
+            <Badge variant="secondary" className="ml-2" color={colors.limeneon}>
+              <TrendingDown className="h-4 w-4" />
+              <span>-5.2%</span>
+            </Badge>
+          </CardTitle>
+          <CardDescription>
+            Animated clipped radar chart - Total visitors for the last 6 months
+          </CardDescription>
+        </CardHeader>
+      </BlurFade>
       <CardContent className="pb-0">
         <ChartContainer
           config={chartConfig}
@@ -120,7 +123,7 @@ export function AnimatedClippedRadarChart({
             <PolarGrid strokeDasharray="3 3" />
 
             <defs>
-                <clipPath id="clipped-sector">
+              <clipPath id="clipped-sector">
                 {currentAngle >= 360 ? (
                   <circle cx={centerX} cy={centerY} r={radius} fill="white" />
                 ) : (
@@ -129,8 +132,8 @@ export function AnimatedClippedRadarChart({
                       M ${centerX} ${centerY}
                       L ${centerX} ${centerY - radius}
                       A ${radius} ${radius} 0 ${
-                        currentAngle > 180 ? 1 : 0
-                      } 1 ${x} ${y}
+                      currentAngle > 180 ? 1 : 0
+                    } 1 ${x} ${y}
                       Z
                     `}
                     fill="white"
@@ -157,7 +160,7 @@ export function AnimatedClippedRadarChart({
                 />
               </linearGradient>
             </defs>
-                
+
             <Radar
               dataKey="desktop"
               stroke={chartConfig.desktop.color}
@@ -165,7 +168,6 @@ export function AnimatedClippedRadarChart({
               fillOpacity={0.4}
               clipPath="url(#clipped-sector)"
             />
-            
           </RadarChart>
         </ChartContainer>
       </CardContent>
