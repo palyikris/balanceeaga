@@ -43,6 +43,7 @@ export default function CategoriesPage() {
   });
 
   const onSubmit = (values: Category) => {
+    console.log(editing);
     if (editing) {
       const payload: Omit<Category, "id"> = {
         name: values.name,
