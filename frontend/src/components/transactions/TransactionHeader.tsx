@@ -1,16 +1,22 @@
 import { TypingAnimation } from "../magicui/typing-animation";
 import { Input } from "../ui/input";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 interface TransactionHeaderProps {
   search: string;
   setSearch: (value: string) => void;
   setCategory: (value: string) => void;
+  categories: { id: string; name: string }[];
 }
 
 export default function TransactionHeader(props: TransactionHeaderProps) {
-
-  const { search, setSearch } = props;
+  const { search, setSearch, setCategory, categories } = props;
 
   return (
     <div className="flex justify-between items-center mt-4">
@@ -26,20 +32,21 @@ export default function TransactionHeader(props: TransactionHeaderProps) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        {/* <Select onValueChange={setCategory}>
+        <Select onValueChange={setCategory}>
           <SelectTrigger className="w-[180px] bg-graphite-900 border border-offwhite/10 text-offwhite/80">
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
-            <SelectItem value="Income">Income</SelectItem>
-            <SelectItem value="Groceries">Groceries</SelectItem>
-            <SelectItem value="Food & Drinks">Food & Drinks</SelectItem>
-            <SelectItem value="Utilities">Utilities</SelectItem>
-            <SelectItem value="Entertainment">Entertainment</SelectItem>
-            <SelectItem value="Shopping">Shopping</SelectItem>
+          <SelectContent className="bg-graphite border border-offwhite/10 text-offwhite/80 max-h-60 overflow-y-auto">
+            {categories.length === 0 && (
+              <SelectItem value="all">No categories</SelectItem>
+            )}
+            {categories.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name}
+              </SelectItem>
+            ))}
           </SelectContent>
-        </Select> */}
+        </Select>
       </div>
     </div>
   );

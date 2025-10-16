@@ -120,14 +120,14 @@ export default function TransactionDetailPage() {
         <Button
           variant="secondary"
           onClick={() => navigate("/transactions")}
-          className="bg-tealblue/10 text-tealblue border border-tealblue/30 hover:bg-tealblue/20"
+          className="bg-tealblue/10 text-tealblue border border-tealblue/30 hover:bg-tealblue/20 cursor-pointer"
         >
           Back to Transactions
         </Button>
         <Button
           onClick={handleDelete}
           disabled={deleteTx.isPending}
-          className="bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20"
+          className="bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 cursor-pointer"
         >
           Delete Transaction
         </Button>

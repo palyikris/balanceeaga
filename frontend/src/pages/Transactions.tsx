@@ -7,6 +7,7 @@ import type { Transaction } from "@/types/transaction";
 import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import TransactionHeader from "@/components/transactions/TransactionHeader";
 import TransactionSummary from "@/components/transactions/TransactionSummary";
+import { useAllCategories } from "@/hooks/categories/useAllCategories";
 
 export default function Transactions() {
   const { data, isLoading } = useAllTransactions();
@@ -17,6 +18,8 @@ export default function Transactions() {
   const [dateRange, setDateRange] = useState<{ from?: string; to?: string }>(
     {}
   );
+
+  const { isLoading: categoryLoading, data: categories } = useAllCategories();
 
   // --- derived data ---
   const filteredData = useMemo(() => {
@@ -58,7 +61,7 @@ export default function Transactions() {
     [filteredData]
   );
 
-  if (isLoading) {
+  if (isLoading || categoryLoading) {
     return (
       <Card className="flex w-full flex-col mx-auto max-w-7xl mt-30 px-4 overflow-hidden pb-6 relative mb-8 space-y-6">
         <div className="flex flex-col justify-between items-center mt-4 py-6">
@@ -77,6 +80,7 @@ export default function Transactions() {
         search={search}
         setSearch={setSearch}
         setCategory={setCategory}
+        categories={categories || []}
       ></TransactionHeader>
 
       <TransactionSummary

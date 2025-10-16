@@ -219,6 +219,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
         )
         return Category.objects.filter(user_id=user_id).order_by("-id")
 
+    def perform_create(self, serializer):
+        serializer.save(user_id="dev-user")
+
 
 from decimal import Decimal
 from django.db.models import Sum, F, Value, Case, When, DecimalField

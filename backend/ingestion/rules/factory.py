@@ -1,19 +1,47 @@
-# backend/rules/factories.py
-from ingestion.models import Rule, RuleMatchType
+from ingestion.models import Rule
 from ingestion.categories.factory import seed_demo_categories
 
 
 def seed_demo_rules(user_id: str):
     """
-    Create a large, realistic set of categorization rules for the demo user.
-    Each rule has a priority (lower = higher priority).
-    Links rules to real Category UUIDs.
+    Create a realistic set of categorization rules based on
+    common transaction patterns observed in Hungarian bank exports.
     """
-    # ensure categories exist
     categories = seed_demo_categories(user_id)
 
     demo_rules = [
-        # --- Food & Groceries ---
+        # --- Income ---
+        {
+            "name": "Monthly salary",
+            "match_type": "contains",
+            "match_value": "fizetés",
+            "cat": "Salary & Wages",
+        },
+        {
+            "name": "Payroll or employer transfer",
+            "match_type": "contains",
+            "match_value": "bt.",
+            "cat": "Salary & Wages",
+        },
+        {
+            "name": "Revolut top-up or incoming",
+            "match_type": "contains",
+            "match_value": "revolut",
+            "cat": "Transfers In",
+        },
+        {
+            "name": "Wise incoming transfer",
+            "match_type": "contains",
+            "match_value": "wise",
+            "cat": "Transfers In",
+        },
+        {
+            "name": "Interest income",
+            "match_type": "contains",
+            "match_value": "kamat",
+            "cat": "Investment Income",
+        },
+        # --- Groceries & Food ---
         {
             "name": "Lidl groceries",
             "match_type": "contains",
@@ -45,220 +73,252 @@ def seed_demo_rules(user_id: str):
             "cat": "Groceries",
         },
         {
-            "name": "McDonalds fast food",
+            "name": "McDonalds",
             "match_type": "contains",
             "match_value": "mcdonald",
-            "cat": "Food & Drinks",
+            "cat": "Restaurants & Cafes",
         },
         {
-            "name": "KFC fast food",
+            "name": "KFC",
             "match_type": "contains",
             "match_value": "kfc",
-            "cat": "Food & Drinks",
+            "cat": "Restaurants & Cafes",
         },
         {
-            "name": "Burger King fast food",
+            "name": "Burger King",
             "match_type": "contains",
             "match_value": "burger king",
-            "cat": "Food & Drinks",
-        },
-        {
-            "name": "Cafe / coffee",
-            "match_type": "contains",
-            "match_value": "café",
-            "cat": "Food & Drinks",
-        },
-        {
-            "name": "Starbucks coffee",
-            "match_type": "contains",
-            "match_value": "starbucks",
-            "cat": "Food & Drinks",
-        },
-        {
-            "name": "Pizza place",
-            "match_type": "contains",
-            "match_value": "pizza",
-            "cat": "Food & Drinks",
+            "cat": "Restaurants & Cafes",
         },
         {
             "name": "Wolt food delivery",
             "match_type": "contains",
             "match_value": "wolt",
-            "cat": "Food & Drinks",
+            "cat": "Restaurants & Cafes",
         },
         {
             "name": "Bolt Food delivery",
             "match_type": "contains",
             "match_value": "bolt food",
-            "cat": "Food & Drinks",
+            "cat": "Restaurants & Cafes",
         },
-        # --- Entertainment ---
+        {
+            "name": "Café",
+            "match_type": "contains",
+            "match_value": "café",
+            "cat": "Restaurants & Cafes",
+        },
+        {
+            "name": "Starbucks",
+            "match_type": "contains",
+            "match_value": "starbucks",
+            "cat": "Restaurants & Cafes",
+        },
+        # --- Subscriptions & Entertainment ---
+        {
+            "name": "Netflix subscription",
+            "match_type": "contains",
+            "match_value": "netflix",
+            "cat": "Online Subscriptions",
+        },
         {
             "name": "Spotify",
             "match_type": "contains",
             "match_value": "spotify",
-            "cat": "Entertainment",
-        },
-        {
-            "name": "Netflix",
-            "match_type": "contains",
-            "match_value": "netflix",
-            "cat": "Entertainment",
+            "cat": "Online Subscriptions",
         },
         {
             "name": "YouTube Premium",
             "match_type": "contains",
             "match_value": "youtube",
-            "cat": "Entertainment",
+            "cat": "Online Subscriptions",
         },
         {
-            "name": "Steam",
+            "name": "Apple services",
+            "match_type": "contains",
+            "match_value": "apple",
+            "cat": "Online Subscriptions",
+        },
+        {
+            "name": "Steam / PlayStation",
             "match_type": "contains",
             "match_value": "steam",
             "cat": "Entertainment",
         },
         {
-            "name": "PlayStation",
+            "name": "Cinema or tickets",
             "match_type": "contains",
-            "match_value": "playstation",
-            "cat": "Entertainment",
-        },
-        {
-            "name": "Cinema",
-            "match_type": "contains",
-            "match_value": "cinema",
-            "cat": "Entertainment",
-        },
-        {
-            "name": "Ticket purchase",
-            "match_type": "contains",
-            "match_value": "ticket",
+            "match_value": "mozi",
             "cat": "Entertainment",
         },
         # --- Transport ---
+        {
+            "name": "Public transport BKK",
+            "match_type": "contains",
+            "match_value": "bkk",
+            "cat": "Transport",
+        },
+        {
+            "name": "Parking fees",
+            "match_type": "contains",
+            "match_value": "parkolás",
+            "cat": "Transport",
+        },
+        {
+            "name": "Fuel / MOL",
+            "match_type": "contains",
+            "match_value": "mol",
+            "cat": "Transport",
+        },
+        {
+            "name": "Bolt / Uber ride",
+            "match_type": "contains",
+            "match_value": "bolt",
+            "cat": "Transport",
+        },
         {
             "name": "Uber",
             "match_type": "contains",
             "match_value": "uber",
             "cat": "Transport",
         },
-        {
-            "name": "Bolt taxi",
-            "match_type": "contains",
-            "match_value": "bolt",
-            "cat": "Transport",
-        },
-        {
-            "name": "Parking",
-            "match_type": "contains",
-            "match_value": "parking",
-            "cat": "Transport",
-        },
-        {
-            "name": "Fuel",
-            "match_type": "contains",
-            "match_value": "mol",
-            "cat": "Transport",
-        },
         # --- Shopping ---
         {
-            "name": "Amazon",
+            "name": "Zara",
             "match_type": "contains",
-            "match_value": "amazon",
-            "cat": "Shopping",
-        },
-        {
-            "name": "eBay",
-            "match_type": "contains",
-            "match_value": "ebay",
-            "cat": "Shopping",
+            "match_value": "zara",
+            "cat": "Shopping & Fashion",
         },
         {
             "name": "H&M",
             "match_type": "contains",
             "match_value": "h&m",
-            "cat": "Shopping",
+            "cat": "Shopping & Fashion",
         },
         {
-            "name": "Zara",
+            "name": "Decathlon",
             "match_type": "contains",
-            "match_value": "zara",
-            "cat": "Shopping",
+            "match_value": "decathlon",
+            "cat": "Shopping & Fashion",
+        },
+        {
+            "name": "Amazon",
+            "match_type": "contains",
+            "match_value": "amazon",
+            "cat": "Shopping & Fashion",
+        },
+        {
+            "name": "MediaMarkt",
+            "match_type": "contains",
+            "match_value": "mediamarkt",
+            "cat": "Electronics",
         },
         {
             "name": "IKEA",
             "match_type": "contains",
             "match_value": "ikea",
-            "cat": "Home & Living",
+            "cat": "Home & Utilities",
         },
-        # --- Utilities ---
+        # --- Utilities & Services ---
         {
-            "name": "E.ON utilities",
+            "name": "E.ON",
             "match_type": "contains",
             "match_value": "e.on",
-            "cat": "Utilities",
+            "cat": "Home & Utilities",
         },
         {
-            "name": "Telekom phone",
+            "name": "MVM",
+            "match_type": "contains",
+            "match_value": "mvm",
+            "cat": "Home & Utilities",
+        },
+        {
+            "name": "Telekom",
             "match_type": "contains",
             "match_value": "telekom",
-            "cat": "Utilities",
+            "cat": "Home & Utilities",
         },
         {
-            "name": "Vodafone phone",
+            "name": "Vodafone",
             "match_type": "contains",
             "match_value": "vodafone",
-            "cat": "Utilities",
+            "cat": "Home & Utilities",
         },
         {
-            "name": "Insurance",
+            "name": "Insurance payment",
             "match_type": "contains",
             "match_value": "biztosító",
-            "cat": "Utilities",
-        },
-        # --- Income ---
-        {
-            "name": "Salary",
-            "match_type": "contains",
-            "match_value": "fizetés",
-            "cat": "Income",
-        },
-        {
-            "name": "Revolut transfer",
-            "match_type": "contains",
-            "match_value": "revolut",
-            "cat": "Income",
-        },
-        {
-            "name": "Interest",
-            "match_type": "contains",
-            "match_value": "interest",
-            "cat": "Income",
-        },
-        # --- General / Misc ---
-        {
-            "name": "Rent",
-            "match_type": "amount_range",
-            "match_value": "-999999,-10000",
-            "cat": "Housing",
-        },
-        {
-            "name": "Gym",
-            "match_type": "contains",
-            "match_value": "gym",
-            "cat": "Health",
+            "cat": "Insurance & Health",
         },
         {
             "name": "Pharmacy",
             "match_type": "contains",
             "match_value": "gyógyszertár",
-            "cat": "Health",
+            "cat": "Insurance & Health",
+        },
+        {
+            "name": "Dentist or clinic",
+            "match_type": "contains",
+            "match_value": "klinika",
+            "cat": "Insurance & Health",
+        },
+        # --- Housing ---
+        {
+            "name": "Rent payment",
+            "match_type": "amount_range",
+            "match_value": "-400000,-100000",
+            "cat": "Housing & Rent",
+        },
+        {
+            "name": "Maintenance fee",
+            "match_type": "contains",
+            "match_value": "közös költség",
+            "cat": "Housing & Rent",
+        },
+        # --- Education & Books ---
+        {
+            "name": "University fee",
+            "match_type": "contains",
+            "match_value": "egyetem",
+            "cat": "Education & Books",
         },
         {
             "name": "Books",
             "match_type": "contains",
             "match_value": "book",
-            "cat": "Education",
+            "cat": "Education & Books",
+        },
+        # --- Travel ---
+        {
+            "name": "Airline tickets",
+            "match_type": "contains",
+            "match_value": "ryanair",
+            "cat": "Travel",
+        },
+        {
+            "name": "Accommodation / Airbnb",
+            "match_type": "contains",
+            "match_value": "airbnb",
+            "cat": "Travel",
+        },
+        {
+            "name": "Booking.com",
+            "match_type": "contains",
+            "match_value": "booking.com",
+            "cat": "Travel",
+        },
+        # --- Transfers / Savings ---
+        {
+            "name": "Savings account transfer",
+            "match_type": "contains",
+            "match_value": "megtakarítás",
+            "cat": "Savings & Investments",
+        },
+        {
+            "name": "Investment account transfer",
+            "match_type": "contains",
+            "match_value": "értékpapír",
+            "cat": "Savings & Investments",
         },
     ]
 
@@ -273,7 +333,7 @@ def seed_demo_rules(user_id: str):
                 "enabled": True,
                 "match_type": rule_data["match_type"],
                 "match_value": rule_data["match_value"],
-                "action_set_category": str(category_obj.id),  # UUID link
+                "action_set_category": str(category_obj.id),
             },
         )
         if created_flag:

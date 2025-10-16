@@ -3,26 +3,31 @@ from ingestion.models import Category
 
 def seed_demo_categories(user_id: str):
     """
-    Create demo categories grouped by type (income / expense / transfer).
-    Returns a dict: { 'Groceries': Category instance, ... }
+    Create demo categories based on realistic personal finance data
+    derived from actual transaction exports.
     """
     demo_categories = {
         # --- Income ---
-        "Income": "income",
+        "Salary & Wages": "income",
+        "Transfers In": "income",
+        "Investment Income": "income",
         # --- Expenses ---
         "Groceries": "expense",
-        "Food & Drinks": "expense",
+        "Restaurants & Cafes": "expense",
+        "Online Subscriptions": "expense",
         "Entertainment": "expense",
         "Transport": "expense",
-        "Shopping": "expense",
+        "Shopping & Fashion": "expense",
         "Electronics": "expense",
-        "Home & Living": "expense",
-        "Utilities": "expense",
-        "Housing": "expense",
-        "Health": "expense",
-        "Education": "expense",
-        # --- Transfer type ---
-        "Transfer": "transfer",
+        "Home & Utilities": "expense",
+        "Insurance & Health": "expense",
+        "Housing & Rent": "expense",
+        "Education & Books": "expense",
+        "Travel": "expense",
+        "Other Expenses": "expense",
+        # --- Transfers ---
+        "Transfers Out": "transfer",
+        "Savings & Investments": "transfer",
     }
 
     created_map = {}
