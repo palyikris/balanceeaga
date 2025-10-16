@@ -22,6 +22,9 @@ from ingestion.views import (
     TransactionViewSet,
     RuleViewSet,
     CategoryViewSet,
+    cashflow_view,
+    categories_view,
+    top_merchants_view,
 )
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -39,6 +42,10 @@ router.register(r"categories", CategoryViewSet, basename="categories")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+    # Analytics endpoints (function-based views)
+    path("api/cashflow", cashflow_view, name="cashflow"),
+    path("api/categories-summary", categories_view, name="categories-summary"),
+    path("api/top-merchants", top_merchants_view, name="top-merchants"),
     # OpenAPI schema (JSON/YAML)
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Swagger UI

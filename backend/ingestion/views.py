@@ -218,3 +218,110 @@ class CategoryViewSet(viewsets.ModelViewSet):
             or "dev-user"
         )
         return Category.objects.filter(user_id=user_id).order_by("-id")
+
+
+from decimal import Decimal
+from django.db.models import Sum, F, Value, Case, When, DecimalField
+from django.db.models.functions import ExtractMonth, ExtractYear
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from ingestion.models import Transaction
+
+
+@api_view(["GET"])
+def cashflow_view(request):
+    """Monthly income and expense totals."""
+    user_id = "dev-user"
+
+    qs = (
+        Transaction.objects.filter(user_id=user_id, is_transfer=False)
+        .exclude(booking_date=None)
+        .annotate(year=ExtractYear("booking_date"), month=ExtractMonth("booking_date"))
+        .values("year", "month")
+        .annotate(
+            income=Sum(
+                Case(
+                    When(amount__gt=0, then=F("amount")),
+                    default=Value(0),
+                    output_field=DecimalField(max_digits=14, decimal_places=2),
+                )
+            ),
+            expense=Sum(
+                Case(
+                    When(amount__lt=0, then=F("amount")),
+                    default=Value(0),
+                    output_field=DecimalField(max_digits=14, decimal_places=2),
+                )
+            ),
+        )
+        .order_by("year", "month")
+    )
+
+    data = [
+        {
+            "year": int(r["year"]),
+            "month": int(r["month"]),
+            "income": float(r["income"] or 0),
+            "expense": abs(float(r["expense"] or 0)),
+        }
+        for r in qs
+    ]
+    return Response(data)
+
+
+@api_view(["GET"])
+def categories_view(request):
+    """Breakdown of expenses by category."""
+    user_id = "dev-user"
+
+    qs = (
+        Transaction.objects.filter(user_id=user_id, is_transfer=False, amount__lt=0)
+        .values("category__name", "category__type")
+        .annotate(
+            total=Sum(
+                F("amount") * Value(-1),
+                output_field=DecimalField(max_digits=14, decimal_places=2),
+            )
+        )
+        .order_by("-total")
+    )
+
+    data = [
+        {
+            "category": r["category__name"] or "Egyéb",
+            "type": r["category__type"],
+            "value": float(r["total"] or 0),
+        }
+        for r in qs
+    ]
+    return Response(data)
+
+
+@api_view(["GET"])
+def top_merchants_view(request):
+    """Top counterparties by spending."""
+    user_id = "dev-user"
+    limit = int(request.query_params.get("limit", 10))
+
+    qs = (
+        Transaction.objects.filter(user_id=user_id, is_transfer=False, amount__lt=0)
+        .values("counterparty")
+        .annotate(
+            total=Sum(
+                F("amount") * Value(-1),
+                output_field=DecimalField(max_digits=14, decimal_places=2),
+            )
+        )
+        .order_by("-total")[:limit]
+    )
+
+    data = [
+        {
+            "name": r["counterparty"] or "(no counterparty)",
+            "amount": float(r["total"] or 0),
+        }
+        for r in qs
+    ]
+    return Response(data)

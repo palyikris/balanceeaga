@@ -1,17 +1,16 @@
+import { BlurFade } from "../magicui/blur-fade";
 import { Card } from "../ui/card";
-import { TypingAnimation } from '@/components/magicui/typing-animation';
+import { TypingAnimation } from "@/components/magicui/typing-animation";
 
 interface DashboardSummaryProps {
-  cashflow: { month: string;  income: number; expense: number }[];
+  cashflow: { month: number; income: number; expense: number }[];
 }
 
-
 export default function DashboardSummary(props: DashboardSummaryProps) {
-
   const { cashflow } = props;
 
   return (
-    <div className="grid md:grid-cols-3 gap-4">
+    <BlurFade className="grid md:grid-cols-3 gap-4" inView delay={0.1}>
       <Card className="p-4 bg-graphite-900/70 border border-limeneon/80">
         <h3 className="text-sm uppercase text-offwhite/70">Bevétel</h3>
         <TypingAnimation className="text-2xl font-bold text-limeneon">
@@ -35,6 +34,6 @@ export default function DashboardSummary(props: DashboardSummaryProps) {
       `}
         </TypingAnimation>
       </Card>
-    </div>
+    </BlurFade>
   );
 }

@@ -18,6 +18,7 @@ import { TrendingDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSpring, useMotionValueEvent } from "motion/react";
 import { BlurFade } from "../magicui/blur-fade";
+import type { CategoryRadarData } from "@/api/dashboard/fetchCategoryRadar";
 
 const colors = {
   graphite: "#1C1C1C",
@@ -28,30 +29,23 @@ const colors = {
   tealblue: "#00B3B3",
 };
 
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 273 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-];
-
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  value: {
+    label: "value",
     color: colors.tealblue,
   },
 } satisfies ChartConfig;
 
 interface AnimatedClippedRadarChartProps {
-  size?: number; // Chart size in pixels (default: 400)
-  maxHeight?: string; // Max height class (default: "max-h-[400px]")
+  size?: number;
+  maxHeight?: string;
+  data: CategoryRadarData;
 }
 
 export function AnimatedClippedRadarChart({
   size = 400,
   maxHeight = "max-h-[400px]",
+  data,
 }: AnimatedClippedRadarChartProps) {
   const [currentAngle, setCurrentAngle] = useState(0);
   const [hoveredValue, setHoveredValue] = useState(0);
@@ -66,7 +60,7 @@ export function AnimatedClippedRadarChart({
   useEffect(() => {
     if (!hasAnimated) {
       springAngle.set(360);
-      springValue.set(chartData[chartData.length - 1].desktop);
+      springValue.set(data[data.length - 1].value);
       setHasAnimated(true);
     }
   }, [hasAnimated, springAngle, springValue]);
@@ -85,13 +79,14 @@ export function AnimatedClippedRadarChart({
         <CardHeader className="items-center pb-4 border-l border-electric/80 p-4 max-w-md">
           <CardTitle>
             {Math.round(hoveredValue)}
-            <Badge variant="secondary" className="ml-2" color={colors.limeneon}>
+            {/* <Badge variant="secondary" className="ml-2" color={colors.limeneon}>
               <TrendingDown className="h-4 w-4" />
               <span>-5.2%</span>
-            </Badge>
+            </Badge> */}
           </CardTitle>
           <CardDescription>
-            Animated clipped radar chart - Total visitors for the last 6 months
+            Vizsgáld meg a kiadásaid kategóriák szerint. Vigyél az egérrel a
+            grafikon fölé a részletekért!
           </CardDescription>
         </CardHeader>
       </BlurFade>
@@ -103,23 +98,25 @@ export function AnimatedClippedRadarChart({
           <RadarChart
             width={size}
             height={size}
-            data={chartData}
+            data={data.map((item) => {
+              return { ...item, Kiadás: item.value };
+            })}
             onMouseMove={(state) => {
               if (state.activePayload && state.activePayload[0]) {
                 const v = state.activePayload[0].value;
                 const idx = state.activeTooltipIndex || 0;
-                const a = (idx * 360) / chartData.length;
+                const a = (idx * 360) / data.length;
                 springAngle.set(a);
                 springValue.set(v);
               }
             }}
             onMouseLeave={() => {
               springAngle.set(360);
-              springValue.set(chartData[chartData.length - 1].desktop);
+              springValue.set(data[data.length - 1].value);
             }}
           >
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <PolarAngleAxis dataKey="month" />
+            <PolarAngleAxis dataKey="category" />
             <PolarGrid strokeDasharray="3 3" />
 
             <defs>
@@ -142,7 +139,7 @@ export function AnimatedClippedRadarChart({
               </clipPath>
 
               <linearGradient
-                id="gradient-clipped-radar-desktop"
+                id="gradient-clipped-radar-value"
                 x1="0"
                 y1="0"
                 x2="0"
@@ -150,22 +147,22 @@ export function AnimatedClippedRadarChart({
               >
                 <stop
                   offset="5%"
-                  stopColor={chartConfig.desktop.color}
+                  stopColor={chartConfig.value.color}
                   stopOpacity={0.3}
                 />
                 <stop
                   offset="95%"
-                  stopColor={chartConfig.desktop.color}
+                  stopColor={chartConfig.value.color}
                   stopOpacity={0.1}
                 />
               </linearGradient>
             </defs>
 
             <Radar
-              dataKey="desktop"
-              stroke={chartConfig.desktop.color}
-              fill="url(#gradient-clipped-radar-desktop)"
-              fillOpacity={0.4}
+              dataKey="Kiadás"
+              stroke={chartConfig.value.color}
+              fill={chartConfig.value.color}
+              fillOpacity={0.2}
               clipPath="url(#clipped-sector)"
             />
           </RadarChart>
