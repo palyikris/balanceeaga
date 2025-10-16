@@ -1,195 +1,154 @@
 // src/pages/RulesPage.tsx
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Loader2, Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TypingAnimation } from "@/components/magicui/typing-animation";
+import { BlurFade } from "@/components/magicui/blur-fade";
+import type { Rule } from "@/types/rule";
+import { useAllRules } from "@/hooks/rules/useAllRules";
+import RuleDialog from "@/components/rules/RuleDialog";
+import RuleList from "@/components/rules/RuleList";
+import { useCreateRule } from "@/hooks/rules/useCreateRule";
+import { useUpdateRule } from "@/hooks/rules/useUpdateRule";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import { useAllCategories } from "@/hooks/categories/useAllCategories";
 
 const ruleSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1, "A név kötelező"),
   match_type: z.enum(["contains", "regex", "equals", "amount_range"]),
-  match_value: z.string(),
-  action_set_category_id: z.string().nullable().optional(),
-  enabled: z.boolean().default(true),
+  match_value: z.string().min(1, "A feltétel értéke kötelező"),
+  action_set_category: z.string().nullable().optional(),
+  enabled: z.boolean(),
+  priority: z.number(),
+  user_id: z.string(),
+  action_mark_transfer: z.boolean(),
 });
 
 export default function RulesPage() {
-  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<any | null>(null);
+  const [editing, setEditing] = useState<Rule | null>(null);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["rules"],
-    queryFn: async () => {
-      const res = await fetch("http://127.0.0.1:8000/api/rules");
-      return res.json();
-    },
-  });
+  const { data, isLoading } = useAllRules();
+  const createRule = useCreateRule();
+  const updateRule = useUpdateRule();
 
-  const mutation = useMutation({
-    mutationFn: async (values: any) => {
-      const method = editing ? "PATCH" : "POST";
-      const url = editing ? `/api/rules/${editing.id}` : "/api/rules";
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["rules"],
-      });
-      setOpen(false);
-      setEditing(null);
-    },
-  });
+  const { data: categories, isLoading: categoriesLoading } = useAllCategories();
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      await fetch(`/api/rules/${id}`, { method: "DELETE" });
-    },
-    onSuccess: () => queryClient.invalidateQueries(
-      { queryKey: ["rules"] }
-    ),
-  });
-
-  const { register, handleSubmit, reset, watch } = useForm({
+  const { register, handleSubmit, reset, watch } = useForm<
+    z.infer<typeof ruleSchema>
+  >({
     resolver: zodResolver(ruleSchema),
+    defaultValues: {
+      name: "",
+      match_type: "contains",
+      match_value: "",
+      action_set_category: null,
+      enabled: true,
+      priority: 0,
+      user_id: "dev-user",
+      action_mark_transfer: false,
+    },
   });
 
-  const onSubmit = (values: any) => mutation.mutate(values);
+  const onSubmit = (values: Omit<Rule, "id" | "created_at" | "updated_at">) => {
+    console.log(editing);
+    if (editing) {
+      const payload: Partial<Omit<Rule, "id" | "created_at" | "updated_at">> = {
+        name: values.name,
+        match_type: values.match_type,
+        match_value: values.match_value,
+        action_set_category: values.action_set_category,
+        enabled: values.enabled,
+        priority: values.priority,
+        action_mark_transfer: values.action_mark_transfer,
+        user_id: "dev-user",
+      };
+      updateRule.mutate(
+        {
+          id: editing.id,
+          data: payload,
+        },
+        {
+          onSuccess: () => {
+            setOpen(false);
+            reset();
+            setEditing(null);
+          },
+        }
+      );
+      return;
+    }
 
-  if (isLoading)
+    const payload: Omit<Rule, "id" | "created_at" | "updated_at"> = {
+      name: values.name,
+      match_type: values.match_type,
+      match_value: values.match_value,
+      action_set_category: values.action_set_category,
+      enabled: values.enabled,
+      priority: values.priority,
+      user_id: "dev-user",
+      action_mark_transfer: values.action_mark_transfer,
+    };
+
+    createRule.mutate(payload, {
+      onSuccess: () => {
+        setOpen(false);
+        reset();
+        setEditing(null);
+      },
+    });
+  };
+
+  if (isLoading || categoriesLoading)
     return (
       <div className="flex justify-center p-10 text-offwhite">
-        <Loader2 className="animate-spin" />
+        <Spinner color="#00B3B3" size={30} className="animate-spin" />
       </div>
     );
 
   return (
-    <div className="p-6 text-offwhite">
-      <Card className="bg-coolgray p-5">
+    <div className="flex w-full flex-col mx-auto max-w-7xl mt-30 px-4 overflow-hidden pb-6 relative mb-8 space-y-6">
+      <Card className="bg-graphite/50 p-5">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Szabályok</h2>
-          <Button
-            className="bg-electric text-graphite font-bold"
-            onClick={() => {
-              reset();
-              setEditing(null);
-              setOpen(true);
-            }}
-          >
-            <Plus className="mr-1 h-4 w-4" /> Új szabály
-          </Button>
+          <h2 className="text-3xl font-bold text-tealblue">
+            <TypingAnimation>Szabályok.</TypingAnimation>
+          </h2>
+          <BlurFade inView delay={0.1} direction="left">
+            <Button
+              className="bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 cursor-pointer"
+              onClick={() => {
+                reset();
+                setEditing(null);
+                setOpen(true);
+              }}
+            >
+              <Plus className="mr-1 h-4 w-4" /> Új szabály
+            </Button>
+          </BlurFade>
         </div>
 
-        <div className="space-y-3">
-          {data?.map((rule: any) => (
-            <div
-              key={rule.id}
-              className="flex justify-between items-center bg-graphite/60 p-3 rounded-lg"
-            >
-              <div>
-                <span className="font-semibold">{rule.name}</span>{" "}
-                <span className="text-sm text-limeneon">{rule.match_type}</span>{" "}
-                →{" "}
-                <span className="text-sm text-tealblue">
-                  {rule.match_value}
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => {
-                    reset(rule);
-                    setEditing(rule);
-                    setOpen(true);
-                  }}
-                >
-                  <Pencil className="w-4 h-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => alert("Preview not yet implemented")}
-                >
-                  <Eye className="w-4 h-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => deleteMutation.mutate(rule.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <RuleList
+          data={data}
+          setEditing={setEditing}
+          setOpen={setOpen}
+          reset={reset}
+        ></RuleList>
       </Card>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="bg-coolgray border border-limeneon/30">
-          <DialogHeader>
-            <DialogTitle>
-              {editing ? "Szabály szerkesztése" : "Új szabály"}
-            </DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-            <div>
-              <Label>Név</Label>
-              <Input
-                {...register("name")}
-                className="bg-graphite text-offwhite"
-              />
-            </div>
-            <div>
-              <Label>Feltétel típusa</Label>
-              <select
-                {...register("match_type")}
-                className="w-full rounded-md bg-graphite text-offwhite p-2"
-              >
-                <option value="contains">Tartalmaz</option>
-                <option value="regex">Regex</option>
-                <option value="equals">Egyenlő</option>
-                <option value="amount_range">Összeg tartomány</option>
-              </select>
-            </div>
-            <div>
-              <Label>Feltétel értéke</Label>
-              <Input
-                {...register("match_value")}
-                className="bg-graphite text-offwhite"
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label>Engedélyezett</Label>
-              <Switch {...register("enabled")} checked={watch("enabled")} />
-            </div>
-            <Button
-              type="submit"
-              className="w-full bg-limeneon text-graphite font-bold"
-            >
-              {editing ? "Mentés" : "Létrehozás"}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <RuleDialog
+        open={open}
+        setOpen={setOpen}
+        editing={editing}
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
+        register={register}
+        watch={watch}
+        categories={categories || []}
+      ></RuleDialog>
     </div>
   );
 }

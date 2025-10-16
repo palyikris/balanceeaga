@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form"; // No change needed here
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,7 @@ import CategoryDialog from "@/components/category/CategoryDialog";
 import CategoryList from "@/components/category/CategoryList";
 import { useCreateCategory } from "@/hooks/categories/useCreateCategory";
 import { useUpdateCategory } from "@/hooks/categories/useUpdateCategory";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
 
 const categorySchema = z.object({
   id: z.string(),
@@ -87,7 +88,7 @@ export default function CategoriesPage() {
   if (isLoading)
     return (
       <div className="flex justify-center p-10 text-offwhite">
-        <Loader2 className="animate-spin" />
+        <Spinner color="#00B3B3" size={30} className="animate-spin" />
       </div>
     );
 

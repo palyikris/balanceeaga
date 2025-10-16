@@ -75,7 +75,7 @@ export default function CategoryDialog({
           </div>
           <Button
             type="submit"
-            className="w-full bg-electric text-graphite font-bold"
+            className="bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 cursor-pointer w-full"
           >
             {editing ? "Mentés" : "Létrehozás"}
           </Button>

@@ -78,7 +78,7 @@ export function AnimatedClippedRadarChart({
       <BlurFade className="w-full" inView delay={0.2} direction="right">
         <CardHeader className="items-center pb-4 border-l border-electric/80 p-4 max-w-md">
           <CardTitle>
-            {Math.round(hoveredValue)}
+            {Math.round(hoveredValue)} Ft
             {/* <Badge variant="secondary" className="ml-2" color={colors.limeneon}>
               <TrendingDown className="h-4 w-4" />
               <span>-5.2%</span>
