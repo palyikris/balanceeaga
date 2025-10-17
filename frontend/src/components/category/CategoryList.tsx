@@ -37,7 +37,7 @@ export default function CategoryList({
         ?.slice()
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((cat: Category, i) => (
-          <BlurFade inView delay={0.2 + 0.1 * i} direction="up" key={cat.id}>
+          <BlurFade delay={0.2 + 0.1 * i} direction="up" key={cat.id}>
             <li
               key={cat.id}
               className="flex justify-between items-center bg-graphite/60 p-3 rounded-lg border border-coolgray"

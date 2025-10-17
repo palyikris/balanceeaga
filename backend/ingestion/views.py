@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import FileImport, FileStatus
 from .serializers import FileImportSerializer
-from .tasks import parse_import_task
+from .tasks import parse_import_task, apply_rules_task
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .serializers import ImportUploadSerializer, TransactionSerializer
 from pathlib import Path
@@ -193,6 +193,57 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+    @action(detail=False, methods=["get"], url_path="reapply-rules")
+    def reapply_rules(self, request):
+        """
+        Reapply rules to all uncategorized transactions for the current user.
+        Tries several simple matching strategies (regex/pattern, exact counterparty,
+        substring match against name/description). Updates transactions in-place.
+        """
+        user_id = (
+            self.request.headers.get("X-User-Id")
+            or self.request.GET.get("user_id")
+            or "dev-user"
+        )
+
+        task = apply_rules_task.delay(user_id)
+
+        return Response(
+            {
+                "task_id": task.id,
+                "status": "Task started",
+                "message": "Rules are being applied in the background",
+            },
+            status=status.HTTP_202_ACCEPTED,
+        )
+
+    @action(detail=True, methods=["patch"], url_path="set-category")
+    def set_category(self, request, pk=None):
+        try:
+            instance = self.get_queryset().get(pk=pk)
+        except Transaction.DoesNotExist:
+            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        cat_id = request.data.get("category_id") or request.data.get("category")
+
+        if cat_id in (None, "", "null"):
+            instance.category = None
+            instance.save()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        try:
+            category = Category.objects.get(pk=cat_id, user_id=instance.user_id)
+        except Category.DoesNotExist:
+            return Response(
+                {"detail": "Category not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        instance.category = category
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class RuleViewSet(viewsets.ModelViewSet):
     queryset = Rule.objects.all().order_by("-id")
@@ -231,6 +282,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from ingestion.models import Transaction
+import re
 
 
 @api_view(["GET"])

@@ -3,13 +3,13 @@ import { notify } from "@/toast";
 import { useMutation } from "@tanstack/react-query"
 
 
-export const useDeleteTransaction = (id: string) => {
+export const useDeleteTransaction = () => {
   return useMutation({
-    mutationKey: ["delete-transaction", id],
-    mutationFn: () => deleteTransaction(id),
+    mutationKey: ["delete-transaction"],
+    mutationFn: (id: string) => deleteTransaction(id),
     onError: (error) => {
       console.error("Delete failed:", error);
       notify.error("Delete failed! Try again later.");
-    }
-  })
-}
+    },
+  });
+};

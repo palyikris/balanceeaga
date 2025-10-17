@@ -5,6 +5,10 @@ import { BlurFade } from "../magicui/blur-fade";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TransactionTableNav from "./TransactionTableNav";
+import { useAllCategories } from "@/hooks/categories/useAllCategories";
+import { useSetCategory } from "@/hooks/transactions/useSetCategory";
+import { useQueryClient } from "@tanstack/react-query";
+import { notify } from "@/toast";
 
 interface DataTableProps {
   data?: Transaction[];
@@ -15,14 +19,43 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
+  const { isLoading: categoryLoading, data: categories } = useAllCategories();
+  const setCategoryHook = useSetCategory();
+  const queryClient = useQueryClient();
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
+    undefined
+  );
+
+  const handleSaveCategory = (
+    transactionId: string,
+    selectedCategory: string
+  ) => {
+    setCategoryHook.mutate(
+      {
+        transactionId: transactionId,
+        categoryId: selectedCategory,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["transactions"] });
+          notify.success("Kategória sikeresen frissítve.");
+        },
+      }
+    );
+  };
+
+  if (categoryLoading) {
+    return <p>Loading categories...</p>;
+  }
+
   return (
     <table className="w-full text-left border-collapse">
       <thead>
         <tr className="border-b border-tealblue text-sm text-offwhite/80">
-          <th className="p-2">Date</th>
-          <th className="p-2">Description</th>
-          <th className="p-2">Amount</th>
-          <th className="p-2">Category</th>
+          <th className="p-2">Dátum</th>
+          <th className="p-2">Leírás</th>
+          <th className="p-2">Összeg</th>
+          <th className="p-2">Kategória</th>
         </tr>
       </thead>
       <tbody>
@@ -32,14 +65,19 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
             <tr
               key={tx.id}
               className="border-b border-gray-800 hover:bg-gray-800/40 text-offwhite/50 cursor-pointer"
-              onClick={() => navigate(`/transactions/${tx.id}`)}
             >
-              <td className="p-2 py-3">
+              <td
+                className="p-2 py-3"
+                onClick={() => navigate(`/transactions/${tx.id}`)}
+              >
                 <BlurFade inView delay={i * 0.2}>
                   {tx.booking_date}
                 </BlurFade>
               </td>
-              <td className="p-2">
+              <td
+                className="p-2"
+                onClick={() => navigate(`/transactions/${tx.id}`)}
+              >
                 <BlurFade inView delay={i * 0.2}>
                   {tx.description_raw}
                 </BlurFade>
@@ -50,6 +88,7 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
                     ? "text-limeneon/90"
                     : "text-electric/90"
                 }`}
+                onClick={() => navigate(`/transactions/${tx.id}`)}
               >
                 <BlurFade inView delay={i * 0.2}>
                   {tx.amount} {tx.currency}
@@ -57,7 +96,26 @@ export default function TransactionTable({ data = [] }: DataTableProps) {
               </td>
               <td className="p-2">
                 <BlurFade inView delay={i * 0.2}>
-                  {tx.category?.name || "-"}
+                  {tx.category ? (
+                    tx.category.name
+                  ) : (
+                    <select
+                      className="rounded-md bg-graphite text-offwhite p-2 border border-coolgray"
+                      onChange={(e) => {
+                        handleSaveCategory(tx.id, e.target.value);
+                        setSelectedCategory(e.target.value);
+                      }}
+                    >
+                      <option value="">-</option>
+                      {[...(categories || [])]
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                    </select>
+                  )}
                 </BlurFade>
               </td>
               {/* <td className="p-2 flex flex-row gap-2">

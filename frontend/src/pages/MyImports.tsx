@@ -42,7 +42,8 @@ export default function MyImports() {
     return (
       <div className="flex w-full justify-center items-center h-[100vh]">
         <p className="text-offwhite/70">
-          No uploads found. Start by importing a file!
+          Nem találhatók feltöltött fájlok. Kérjük, tölts fel egy fájlt a
+          tranzakciók importálásához.
         </p>
       </div>
     );
