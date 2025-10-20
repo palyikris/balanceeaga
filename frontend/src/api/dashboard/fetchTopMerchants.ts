@@ -5,7 +5,7 @@ export const fetchTopMerchants = async (): Promise<{
   amount: number;
 }[]> => {
   const apiBase = import.meta.env.VITE_API_BASE;
-  const response = await axios.get(`${apiBase}/top-merchants`);
+  const response = await axios.get(`${apiBase}/dashboard/top-merchants`);
   return response.data;
 }
 

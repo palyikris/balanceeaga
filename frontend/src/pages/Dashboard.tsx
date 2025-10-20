@@ -7,13 +7,26 @@ import TopMerchant from "@/components/dashboard/TopMerchant";
 import { useCashFlow } from "@/hooks/dashboard/useCashFlow";
 import { useCategoryRadar } from "@/hooks/dashboard/useCategoryRadar";
 import { useTopMerchants } from "@/hooks/dashboard/useTopMerchants";
+import { useBalanceSummary } from "@/hooks/dashboard/useBalanceSummary";
+import { useMonthlyBalance } from "@/hooks/dashboard/useMonthlyBalance";
+import { ClippedAreaChart } from "@/components/ui/clipped-area-chart";
 
 export default function DashboardPage() {
   const { data: cashflow, isLoading: cashflowLoading } = useCashFlow();
   const { data: radar, isLoading: radarLoading } = useCategoryRadar();
   const { data: merchants, isLoading: merchLoading } = useTopMerchants();
+  const { data: balanceSummary, isLoading: balanceSummaryLoading } =
+    useBalanceSummary();
+  const { data: monthlyBalance, isLoading: monthlyBalanceLoading } =
+    useMonthlyBalance();
 
-  if (cashflowLoading || radarLoading || merchLoading)
+  if (
+    cashflowLoading ||
+    radarLoading ||
+    merchLoading ||
+    balanceSummaryLoading ||
+    monthlyBalanceLoading
+  )
     return (
       <div className="flex w-full h-full flex-col mx-auto max-w-7xl mt-30 px-4 overflow-hidden pb-6 relative mb-8 space-y-6 justify-center items-center">
         <Spinner color="#00B3B3"></Spinner>
@@ -26,7 +39,10 @@ export default function DashboardPage() {
         Pénzügyi áttekintés.
       </h1>
 
-      <DashboardSummary cashflow={cashflow || []}></DashboardSummary>
+      <DashboardSummary
+        cashflow={cashflow || []}
+        balance={balanceSummary?.total_balance || 0}
+      ></DashboardSummary>
 
       <Card className="bg-graphite/50 p-6">
         <h2 className="text-xl text-offwhite/80 font-bold mb-2">
@@ -45,6 +61,12 @@ export default function DashboardPage() {
         ) : (
           <p>Nincsenek kiemelt kereskedők.</p>
         )}
+      </Card>
+      <Card className="bg-graphite/50 p-6">
+        <h2 className="text-xl text-offwhite/80 font-bold mb-2">
+          Havi bevételek és kiadások
+        </h2>
+        <ClippedAreaChart chartData={monthlyBalance || []}></ClippedAreaChart>
       </Card>
     </div>
   );

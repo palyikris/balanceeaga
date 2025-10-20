@@ -380,3 +380,101 @@ def top_merchants_view(request):
         for r in qs
     ]
     return Response(data)
+
+
+@api_view(["GET"])
+def balance_summary(request):
+    user_id = "dev-user"
+
+    aggregates = (
+        Transaction.objects.filter(user_id=user_id)
+        .select_related("category")
+        .aggregate(
+            income=Sum(
+                Case(
+                    When(category__type="income", then=F("amount")),
+                    default=Value(0),
+                    output_field=DecimalField(),
+                )
+            ),
+            expense=Sum(
+                Case(
+                    When(category__type="expense", then=F("amount")),
+                    default=Value(0),
+                    output_field=DecimalField(),
+                )
+            ),
+        )
+    )
+
+    income = aggregates.get("income") or Decimal("0")
+    expense = aggregates.get("expense") or Decimal("0")
+    net_savings = income - expense
+
+    # Nettó egyenleg (kumulativ megtakaritas)
+    total_balance = net_savings
+
+    return Response(
+        {
+            "income": income,
+            "expense": expense,
+            "net_savings": net_savings,
+            "total_balance": total_balance,
+        }
+    )
+
+
+from datetime import date
+from dateutil.relativedelta import relativedelta
+from django.db.models.functions import TruncMonth
+
+
+@api_view(["GET"])
+def monthly_balance(request):
+    user_id = "dev-user"
+
+    months = int(request.GET.get("months", 6))
+    today = date.today()
+    start_date = today - relativedelta(months=months - 1)
+    start_date = start_date.replace(day=1)
+
+    # csoportosítás hónap szerint
+    qs = (
+        Transaction.objects.filter(user_id=user_id, booking_date__gte=start_date)
+        .select_related("category")
+        .annotate(month=TruncMonth("booking_date"))
+        .values("month")
+        .annotate(
+            income=Sum(
+                Case(
+                    When(category__type="income", then=F("amount")),
+                    default=Value(0),
+                    output_field=DecimalField(),
+                )
+            ),
+            expense=Sum(
+                Case(
+                    When(category__type="expense", then=F("amount")),
+                    default=Value(0),
+                    output_field=DecimalField(),
+                )
+            ),
+        )
+        .order_by("month")
+    )
+
+    # JSON formázás
+    result = []
+    for row in qs:
+        income = row.get("income") or Decimal("0")
+        expense = row.get("expense") or Decimal("0")
+        result.append(
+            {
+                "month": row["month"].strftime("%Y-%m"),
+                "income": income,
+                "expense": expense,
+                "net": income - expense,
+            }
+        )
+
+    return Response(result)

@@ -25,6 +25,8 @@ from ingestion.views import (
     cashflow_view,
     categories_view,
     top_merchants_view,
+    balance_summary,
+    monthly_balance,
 )
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -43,9 +45,13 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     # Analytics endpoints (function-based views)
-    path("api/cashflow", cashflow_view, name="cashflow"),
-    path("api/categories-summary", categories_view, name="categories-summary"),
-    path("api/top-merchants", top_merchants_view, name="top-merchants"),
+    path("api/dashboard/cashflow", cashflow_view, name="cashflow"),
+    path(
+        "api/dashboard/categories-summary", categories_view, name="categories-summary"
+    ),
+    path("api/dashboard/top-merchants", top_merchants_view, name="top-merchants"),
+    path("api/dashboard/balance-summary", balance_summary, name="balance-summary"),
+    path("api/dashboard/monthly-balance", monthly_balance, name="monthly-balance"),
     # OpenAPI schema (JSON/YAML)
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Swagger UI

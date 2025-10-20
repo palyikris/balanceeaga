@@ -8,7 +8,7 @@ export const fetchCashflow = async (): Promise<{
 }[]> => {
   const apiBase = import.meta.env.VITE_API_BASE;
 
-  const response = await axios.get(`${apiBase}/cashflow`);
+  const response = await axios.get(`${apiBase}/dashboard/cashflow`);
   return response.data;
 }
 
