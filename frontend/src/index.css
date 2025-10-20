@@ -105,6 +105,9 @@
   --color-limeneon: #A3FF12;   /* akcentus, highlight */
   --color-electric: #FF3CAC;   /* akcentus, kiemelések */
   --color-tealblue: #00B3B3;   /* másodlagos akcentus */
+  --color-purple: #6c71c2
+  --color-menthol: #95f7b1
+  
 
   /* Ha csak ezekre van szükséged, nem muszáj a teljes default palettát felülírni.
      (Ha teljesen saját palettát akarsz, a --color-* namespace-et nullázhatod: --color-* : initial) */

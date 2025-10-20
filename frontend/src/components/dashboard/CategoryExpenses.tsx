@@ -1,21 +1,27 @@
 import { Card } from "../ui/card";
 import { RoundedPieChart } from "../ui/rounded-pie-chart";
 
-interface TopMerchantProps {
-  merchants: { name: string; amount: number }[];
+interface CategoryExpenses {
+  categoryExpenses: { category: string; amount: number }[];
 }
 
-export default function TopMerchant(props: TopMerchantProps) {
-  const { merchants } = props;
+export default function CategoryExpenses(props: CategoryExpenses) {
+  const { categoryExpenses } = props;
+
+  console.log("Category Expenses:", categoryExpenses);
+
+  categoryExpenses.forEach((ce) => {
+    ce.amount = Math.abs(ce.amount);
+  });
 
   return (
-    <Card className="bg-graphite/50 p-6 w-full">
+    <Card className="bg-graphite/50 p-6 w-full h-full">
       <h2 className="text-xl font-bold mb-3 text-offwhite/80">
-        Top kereskedők
+        Kiadások kategóriák szerint
       </h2>
-      <RoundedPieChart chartData={merchants}></RoundedPieChart>
+      <RoundedPieChart chartData={categoryExpenses}></RoundedPieChart>
       {/* <ul className="divide-y divide-tealblue/30">
-        {merchants?.map((m) => (
+        {categoryExpenses?.map((m) => (
           <li key={m.name} className="flex justify-between py-2">
             <span className="text-offwhite/50">{m.name}</span>
             <span className="text-limeneon">

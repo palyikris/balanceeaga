@@ -358,7 +358,7 @@ def categories_view(request):
 def top_merchants_view(request):
     """Top counterparties by spending."""
     user_id = "dev-user"
-    limit = int(request.query_params.get("limit", 10))
+    limit = int(request.query_params.get("limit", 5))
 
     qs = (
         Transaction.objects.filter(user_id=user_id, is_transfer=False, amount__lt=0)
@@ -478,3 +478,56 @@ def monthly_balance(request):
         )
 
     return Response(result)
+
+
+@api_view(["GET"])
+def category_expenses(request):
+    user_id = "dev-user"
+
+    period = request.GET.get("period")
+    today = date.today()
+
+    if period:
+        try:
+            year, month = map(int, period.split("-"))
+            start_date = date(year, month, 1)
+        except Exception:
+            return Response(
+                {"detail": "Invalid period format (use YYYY-MM)"}, status=400
+            )
+    else:
+        start_date = today.replace(day=1)
+
+    # hónap utolsó napja
+    if start_date.month == 12:
+        end_date = date(start_date.year + 1, 1, 1)
+    else:
+        end_date = date(start_date.year, start_date.month + 1, 1)
+
+    # tranzakciók összesítése kategóriánként
+    qs = (
+        Transaction.objects.filter(
+            user_id=user_id,
+            booking_date__gte=start_date,
+            booking_date__lt=end_date,
+            category__type="expense",
+        )
+        .select_related("category")
+        .values(name=F("category__name"))
+        .annotate(amount=Sum("amount"))
+        .order_by("-amount")
+    )
+
+    total = sum((row["amount"] or Decimal("0")) for row in qs) or Decimal("1")
+
+    # top 5 + százalékos arány
+    data = [
+        {
+            "category": row["name"],
+            "amount": row["amount"],
+        }
+        for row in list(qs)[:5]
+        if row["amount"]
+    ]
+
+    return Response(data)

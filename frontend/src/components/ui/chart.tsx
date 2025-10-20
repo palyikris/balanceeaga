@@ -128,30 +128,30 @@ function ChartTooltipContent({
 
   const tooltipLabel = React.useMemo(() => {
     if (hideLabel || !payload?.length) {
-      return null
+      return null;
     }
 
-    const [item] = payload
-    const key = `${labelKey || item?.dataKey || item?.name || "value"}`
-    const itemConfig = getPayloadConfigFromPayload(config, item, key)
+    const [item] = payload;
+    const key = `${labelKey || item?.dataKey || item?.name || "value"}`;
+    const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
       !labelKey && typeof label === "string"
         ? config[label as keyof typeof config]?.label || label
-        : itemConfig?.label
+        : itemConfig?.label;
 
     if (labelFormatter) {
       return (
         <div className={cn("font-medium", labelClassName)}>
           {labelFormatter(value, payload)}
         </div>
-      )
+      );
     }
 
     if (!value) {
-      return null
+      return null;
     }
 
-    return <div className={cn("font-medium", labelClassName)}>{value}</div>
+    return <div className={cn("font-medium", labelClassName)}>{value}</div>;
   }, [
     label,
     labelFormatter,
@@ -160,13 +160,13 @@ function ChartTooltipContent({
     labelClassName,
     config,
     labelKey,
-  ])
+  ]);
 
   if (!active || !payload?.length) {
-    return null
+    return null;
   }
 
-  const nestLabel = payload.length === 1 && indicator !== "dot"
+  const nestLabel = payload.length === 1 && indicator !== "dot";
 
   return (
     <div
@@ -228,13 +228,13 @@ function ChartTooltipContent({
                     >
                       <div className="grid gap-1.5">
                         {nestLabel ? tooltipLabel : null}
-                        <span className="text-offwhite/60">
+                        <span className="text-offwhite/60 mr-2">
                           {itemConfig?.label || item.name}
                         </span>
                       </div>
                       {item.value && (
                         <span className="text-offwhite/60 font-mono font-medium tabular-nums">
-                          {item.value.toLocaleString()}
+                          {item.value.toLocaleString() + " Ft"}
                         </span>
                       )}
                     </div>

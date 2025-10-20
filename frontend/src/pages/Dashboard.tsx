@@ -10,6 +10,8 @@ import { useTopMerchants } from "@/hooks/dashboard/useTopMerchants";
 import { useBalanceSummary } from "@/hooks/dashboard/useBalanceSummary";
 import { useMonthlyBalance } from "@/hooks/dashboard/useMonthlyBalance";
 import { ClippedAreaChart } from "@/components/ui/clipped-area-chart";
+import CategoryExpenses from "@/components/dashboard/CategoryExpenses";
+import { useCategoryExpenses } from "@/hooks/dashboard/useCategoryExpenses";
 
 export default function DashboardPage() {
   const { data: cashflow, isLoading: cashflowLoading } = useCashFlow();
@@ -19,13 +21,16 @@ export default function DashboardPage() {
     useBalanceSummary();
   const { data: monthlyBalance, isLoading: monthlyBalanceLoading } =
     useMonthlyBalance();
+  const { data: categoryExpenses, isLoading: categoryExpensesLoading } =
+    useCategoryExpenses();
 
   if (
     cashflowLoading ||
     radarLoading ||
     merchLoading ||
     balanceSummaryLoading ||
-    monthlyBalanceLoading
+    monthlyBalanceLoading ||
+    categoryExpensesLoading
   )
     return (
       <div className="flex w-full h-full flex-col mx-auto max-w-7xl mt-30 px-4 overflow-hidden pb-6 relative mb-8 space-y-6 justify-center items-center">
@@ -55,11 +60,24 @@ export default function DashboardPage() {
         )}
       </Card>
 
-      <Card className="flex flex-row justify-center items-center gap-4 bg-transparent p-0 border-none">
+      <Card className="flex flex-row items-stretch gap-4 bg-transparent p-0 border-none">
         {merchants && merchants.length > 0 ? (
-          <TopMerchant merchants={merchants} />
+          <>
+            <div className="flex-1 min-h-0 flex flex-col">
+              <div className="flex-1">
+                <TopMerchant merchants={merchants} />
+              </div>
+            </div>
+            <div className="flex-1 min-h-0 flex flex-col">
+              <div className="flex-1">
+                <CategoryExpenses categoryExpenses={categoryExpenses || []} />
+              </div>
+            </div>
+          </>
         ) : (
-          <p>Nincsenek kiemelt kereskedők.</p>
+          <div className="w-full h-full flex items-center justify-center">
+            <p>Nem sikerült az adatokat megjeleníteni.</p>
+          </div>
         )}
       </Card>
       <Card className="bg-graphite/50 p-6">

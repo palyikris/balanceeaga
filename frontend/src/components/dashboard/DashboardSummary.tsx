@@ -11,7 +11,7 @@ export default function DashboardSummary(props: DashboardSummaryProps) {
   const { cashflow } = props;
 
   return (
-    <BlurFade className="grid md:grid-cols-4 gap-2" inView delay={0.1}>
+    <BlurFade className="grid md:grid-cols-4 gap-6" inView delay={0.1}>
       <Card className="p-4 bg-graphite-900/70 border border-limeneon/80">
         <h3 className="text-sm uppercase text-offwhite/70">Bevétel</h3>
         <TypingAnimation className="text-2xl font-bold text-limeneon">

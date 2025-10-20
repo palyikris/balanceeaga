@@ -27,6 +27,7 @@ from ingestion.views import (
     top_merchants_view,
     balance_summary,
     monthly_balance,
+    category_expenses,
 )
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -52,6 +53,9 @@ urlpatterns = [
     path("api/dashboard/top-merchants", top_merchants_view, name="top-merchants"),
     path("api/dashboard/balance-summary", balance_summary, name="balance-summary"),
     path("api/dashboard/monthly-balance", monthly_balance, name="monthly-balance"),
+    path(
+        "api/dashboard/category-expenses", category_expenses, name="category-expenses"
+    ),
     # OpenAPI schema (JSON/YAML)
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Swagger UI
