@@ -71,7 +71,6 @@ export function RoundedPieChart(props: RoundedPieChartProps) {
     entry.name = entry.name || entry.category || "N/A";
   });
 
-  console.log("RoundedPieChart data:", chartData);
 
   return (
     <Card className="flex flex-col bg-transparent border-none p-0">

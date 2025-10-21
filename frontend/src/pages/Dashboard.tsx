@@ -12,6 +12,8 @@ import { useMonthlyBalance } from "@/hooks/dashboard/useMonthlyBalance";
 import { ClippedAreaChart } from "@/components/ui/clipped-area-chart";
 import CategoryExpenses from "@/components/dashboard/CategoryExpenses";
 import { useCategoryExpenses } from "@/hooks/dashboard/useCategoryExpenses";
+import { useSpendingPatterns } from "@/hooks/dashboard/useSpendingPatterns";
+import { ClippedAreaChartForSpendingPatterns } from "@/components/ui/clipped-area-chart-spending-patterns";
 
 export default function DashboardPage() {
   const { data: cashflow, isLoading: cashflowLoading } = useCashFlow();
@@ -23,6 +25,8 @@ export default function DashboardPage() {
     useMonthlyBalance();
   const { data: categoryExpenses, isLoading: categoryExpensesLoading } =
     useCategoryExpenses();
+  const { data: spendingPatterns, isLoading: spendingPatternsLoading } =
+    useSpendingPatterns();
 
   if (
     cashflowLoading ||
@@ -30,7 +34,8 @@ export default function DashboardPage() {
     merchLoading ||
     balanceSummaryLoading ||
     monthlyBalanceLoading ||
-    categoryExpensesLoading
+    categoryExpensesLoading ||
+    spendingPatternsLoading
   )
     return (
       <div className="flex w-full h-full flex-col mx-auto max-w-7xl mt-30 px-4 overflow-hidden pb-6 relative mb-8 space-y-6 justify-center items-center">
@@ -85,6 +90,14 @@ export default function DashboardPage() {
           Havi bevételek és kiadások
         </h2>
         <ClippedAreaChart chartData={monthlyBalance || []}></ClippedAreaChart>
+      </Card>
+      <Card className="bg-graphite/50 p-6">
+        <h2 className="text-xl text-offwhite/80 font-bold mb-2">
+          Napi költési minták
+        </h2>
+        <ClippedAreaChartForSpendingPatterns
+          chartData={spendingPatterns?.by_weekday || []}
+        ></ClippedAreaChartForSpendingPatterns>
       </Card>
     </div>
   );

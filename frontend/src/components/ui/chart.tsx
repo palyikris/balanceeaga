@@ -64,7 +64,7 @@ function ChartContainer({
         </RechartsPrimitive.ResponsiveContainer>
       </div>
     </ChartContext.Provider>
-  )
+  );
 }
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {

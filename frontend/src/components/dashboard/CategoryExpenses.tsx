@@ -8,7 +8,6 @@ interface CategoryExpenses {
 export default function CategoryExpenses(props: CategoryExpenses) {
   const { categoryExpenses } = props;
 
-  console.log("Category Expenses:", categoryExpenses);
 
   categoryExpenses.forEach((ce) => {
     ce.amount = Math.abs(ce.amount);

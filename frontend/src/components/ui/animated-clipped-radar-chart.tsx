@@ -13,8 +13,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Badge } from "@/components/ui/badge";
-import { TrendingDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSpring, useMotionValueEvent } from "motion/react";
 import { BlurFade } from "../magicui/blur-fade";
@@ -63,7 +61,7 @@ export function AnimatedClippedRadarChart({
       springValue.set(data[data.length - 1].value);
       setHasAnimated(true);
     }
-  }, [hasAnimated, springAngle, springValue]);
+  }, [hasAnimated, springAngle, springValue, data]);
 
   // Calculate center and radius based on size
   const centerX = size / 2;
@@ -85,7 +83,7 @@ export function AnimatedClippedRadarChart({
             </Badge> */}
           </CardTitle>
           <CardDescription>
-            Vizsgáld meg a kiadásaid kategóriák szerint. Vigyél az egérrel a
+            Vizsgáld meg a kiadásaid kategóriák szerint. Vidd az egered a
             grafikon fölé a részletekért!
           </CardDescription>
         </CardHeader>
@@ -94,6 +92,10 @@ export function AnimatedClippedRadarChart({
         <ChartContainer
           config={chartConfig}
           className={`mx-auto aspect-square ${maxHeight}`}
+          // style={{
+          //   width: "600px",
+          //   height: "600px",
+          // }}
         >
           <RadarChart
             width={size}
@@ -116,7 +118,11 @@ export function AnimatedClippedRadarChart({
             }}
           >
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <PolarAngleAxis dataKey="category" />
+            <PolarAngleAxis
+              dataKey="category"
+              tickSize={10}
+              tick={{ fill: colors.offwhite, fontSize: 12 }}
+            />
             <PolarGrid strokeDasharray="3 3" />
 
             <defs>
@@ -164,6 +170,8 @@ export function AnimatedClippedRadarChart({
               fill={chartConfig.value.color}
               fillOpacity={0.2}
               clipPath="url(#clipped-sector)"
+              width={size}
+              height={size}
             />
           </RadarChart>
         </ChartContainer>

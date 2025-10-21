@@ -6,7 +6,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useRef, useState } from "react";
