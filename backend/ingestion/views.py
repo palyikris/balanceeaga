@@ -531,3 +531,34 @@ def category_expenses(request):
     ]
 
     return Response(data)
+
+from django.db.models.functions import ExtractWeekDay
+
+
+@api_view(["GET"])
+def spending_patterns(request):
+    user_id = "dev-user"
+
+    # Hét napjának sorrendje (Django: 1=Vasárnap, 7=Szombat)
+    day_map = {1: "Sun", 2: "Mon", 3: "Tue", 4: "Wed", 5: "Thu", 6: "Fri", 7: "Sat"}
+
+    qs = (
+        Transaction.objects.filter(user_id=user_id, category__type="expense")
+        .exclude(booking_date__isnull=True)
+        .annotate(weekday=ExtractWeekDay("booking_date"))
+        .values("weekday")
+        .annotate(amount=Sum("amount"))
+        .order_by("weekday")
+    )
+
+    result = []
+    for row in qs:
+        weekday = int(row["weekday"])
+        result.append(
+            {
+                "day": day_map.get(weekday, str(weekday)),
+                "amount": row["amount"] or 0,
+            }
+        )
+
+    return Response({"by_weekday": result})

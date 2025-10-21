@@ -28,6 +28,7 @@ from ingestion.views import (
     balance_summary,
     monthly_balance,
     category_expenses,
+    spending_patterns,
 )
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -55,6 +56,9 @@ urlpatterns = [
     path("api/dashboard/monthly-balance", monthly_balance, name="monthly-balance"),
     path(
         "api/dashboard/category-expenses", category_expenses, name="category-expenses"
+    ),
+    path(
+        "api/dashboard/spending-patterns", spending_patterns, name="spending-patterns"
     ),
     # OpenAPI schema (JSON/YAML)
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
