@@ -1,7 +1,6 @@
-import axios from "axios";
+import api from "../api";
 
 export const recategorizeTransactions = async () => {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  const response = await axios.get(`${apiBase}/transactions/reapply-rules`);
+  const response = await api.get(`/transactions/reapply-rules`);
   return response.data;
-}
+};

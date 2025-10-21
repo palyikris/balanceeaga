@@ -1,7 +1,5 @@
-import axios from "axios";
-
+import api from "../api";
 
 export const deleteCategoryById = async (id: string): Promise<void> => {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  await axios.delete(`${apiBase}/categories/${id}`);
+  await api.delete(`/categories/${id}`);
 };

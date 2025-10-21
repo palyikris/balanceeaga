@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 
 export type UploadResponse = { import_id: string };
 
@@ -10,9 +10,7 @@ export async function uploadImport(
   const form = new FormData();
   form.append("file", file);
 
-  const apiBase = import.meta.env.VITE_API_BASE;
-
-  const res = await axios.post<UploadResponse>(`${apiBase}/imports`, form, {
+  const res = await api.post<UploadResponse>(`/imports`, form, {
     headers: { "Content-Type": "multipart/form-data" },
     onUploadProgress: (evt) => {
       if (!onProgress) return;
@@ -30,8 +28,6 @@ export type ImportStatus =
   | { id: string; status: "failed"; error?: string };
 
 export async function fetchImportStatus(id: string): Promise<ImportStatus> {
-  const apiBase = import.meta.env.VITE_API_BASE;
-
-  const res = await axios.get<ImportStatus>(`${apiBase}/imports/${id}`);
+  const res = await api.get<ImportStatus>(`/imports/${id}`);
   return res.data;
 }

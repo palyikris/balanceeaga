@@ -18,6 +18,7 @@ from .models import Rule
 from .serializers import RuleSerializer
 from .models import Category
 from .serializers import CategorySerializer
+from .utils import get_user_id, get_access_token
 
 
 def sha256sum(path: str) -> str:
@@ -39,12 +40,14 @@ class ImportViewSet(
     parser_classes = (MultiPartParser, FormParser)
 
     def get_queryset(self):
-        # később Supabase JWT-ből user azonosítás; dev: header vagy query
-        uid = (
-            self.request.headers.get("X-User-Id")
-            or self.request.GET.get("user_id")
-            or "dev-user"
-        )
+        uid = get_user_id(self.request)
+        access_token = get_access_token(self.request)
+
+        if access_token is None or uid is None:
+            return Response(
+                {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
         qs = super().get_queryset()
         return qs.filter(user_id=uid) if uid else qs.none()
 
@@ -64,11 +67,14 @@ class ImportViewSet(
     )
     def create(self, request, *args, **kwargs):
         file = request.FILES.get("file")
-        user_id = (
-            request.headers.get("X-User-Id")
-            or request.data.get("user_id")
-            or "dev-user"
-        )
+        user_id = get_user_id(request)
+        access_token = get_access_token(request)
+
+        if access_token is None or user_id is None:
+            return Response(
+                {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
         if not file:
             return Response({"detail": "No file"}, status=400)
 
@@ -137,7 +143,14 @@ class ImportViewSet(
 
     @action(detail=False, methods=["get"], url_path="latest")
     def latest_import(self, request):
-        uid = "dev-user"
+        uid = get_user_id(request)
+        access_token = get_access_token(request)
+
+        if access_token is None or uid is None:
+            return Response(
+                {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
         print("latest import for", uid)
         allImport = FileImport.objects.all()
         latest = allImport.filter(user_id=uid).order_by("-created_at").first()
@@ -151,11 +164,14 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TransactionSerializer
 
     def get_queryset(self):
-        user_id = (
-            self.request.headers.get("X-User-Id")
-            or self.request.GET.get("user_id")
-            or "dev-user"
-        )
+        user_id = get_user_id(self.request)
+        access_token = get_access_token(self.request)
+
+        if access_token is None or user_id is None:
+            return Response(
+                {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
         qs = Transaction.objects.filter(user_id=user_id).order_by("-booking_date")
 
         date_from = self.request.query_params.get("date_from")
@@ -200,11 +216,13 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
         Tries several simple matching strategies (regex/pattern, exact counterparty,
         substring match against name/description). Updates transactions in-place.
         """
-        user_id = (
-            self.request.headers.get("X-User-Id")
-            or self.request.GET.get("user_id")
-            or "dev-user"
-        )
+        user_id = get_user_id(request)
+        access_token = get_access_token(request)
+
+        if access_token is None or user_id is None:
+            return Response(
+                {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
 
         task = apply_rules_task.delay(user_id)
 
@@ -250,11 +268,14 @@ class RuleViewSet(viewsets.ModelViewSet):
     serializer_class = RuleSerializer
 
     def get_queryset(self):
-        user_id = (
-            self.request.headers.get("X-User-Id")
-            or self.request.GET.get("user_id")
-            or "dev-user"
-        )
+        user_id = get_user_id(self.request)
+        access_token = get_access_token(self.request)
+
+        if access_token is None or user_id is None:
+            return Response(
+                {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
         return Rule.objects.filter(user_id=user_id).order_by("-id")
 
 
@@ -263,11 +284,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
     def get_queryset(self):
-        user_id = (
-            self.request.headers.get("X-User-Id")
-            or self.request.GET.get("user_id")
-            or "dev-user"
-        )
+        user_id = get_user_id(self.request)
+        access_token = get_access_token(self.request)
+
+        if access_token is None or user_id is None:
+            return Response(
+                {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
         return Category.objects.filter(user_id=user_id).order_by("-id")
 
     def perform_create(self, serializer):
@@ -288,7 +312,11 @@ import re
 @api_view(["GET"])
 def cashflow_view(request):
     """Monthly income and expense totals."""
-    user_id = "dev-user"
+    user_id = get_user_id(request)
+    access_token = get_access_token(request)
+
+    if access_token is None or user_id is None:
+        return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
     qs = (
         Transaction.objects.filter(user_id=user_id, is_transfer=False)
@@ -329,7 +357,11 @@ def cashflow_view(request):
 @api_view(["GET"])
 def categories_view(request):
     """Breakdown of expenses by category."""
-    user_id = "dev-user"
+    user_id = get_user_id(request)
+    access_token = get_access_token(request)
+
+    if access_token is None or user_id is None:
+        return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
     qs = (
         Transaction.objects.filter(user_id=user_id, is_transfer=False, amount__lt=0)
@@ -357,7 +389,12 @@ def categories_view(request):
 @api_view(["GET"])
 def top_merchants_view(request):
     """Top counterparties by spending."""
-    user_id = "dev-user"
+    user_id = get_user_id(request)
+    access_token = get_access_token(request)
+
+    if access_token is None or user_id is None:
+        return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
     limit = int(request.query_params.get("limit", 5))
 
     qs = (
@@ -384,7 +421,11 @@ def top_merchants_view(request):
 
 @api_view(["GET"])
 def balance_summary(request):
-    user_id = "dev-user"
+    user_id = get_user_id(request)
+    access_token = get_access_token(request)
+
+    if access_token is None or user_id is None:
+        return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
     aggregates = (
         Transaction.objects.filter(user_id=user_id)
@@ -431,7 +472,11 @@ from django.db.models.functions import TruncMonth
 
 @api_view(["GET"])
 def monthly_balance(request):
-    user_id = "dev-user"
+    user_id = get_user_id(request)
+    access_token = get_access_token(request)
+
+    if access_token is None or user_id is None:
+        return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
     months = int(request.GET.get("months", 6))
     today = date.today()
@@ -482,7 +527,11 @@ def monthly_balance(request):
 
 @api_view(["GET"])
 def category_expenses(request):
-    user_id = "dev-user"
+    user_id = get_user_id(request)
+    access_token = get_access_token(request)
+
+    if access_token is None or user_id is None:
+        return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
     period = request.GET.get("period")
     today = date.today()
@@ -537,7 +586,11 @@ from django.db.models.functions import ExtractWeekDay
 
 @api_view(["GET"])
 def spending_patterns(request):
-    user_id = "dev-user"
+    user_id = get_user_id(request)
+    access_token = get_access_token(request)
+
+    if access_token is None or user_id is None:
+        return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # Hét napjának sorrendje (Django: 1=Vasárnap, 7=Szombat)
     day_map = {1: "Sun", 2: "Mon", 3: "Tue", 4: "Wed", 5: "Thu", 6: "Fri", 7: "Sat"}

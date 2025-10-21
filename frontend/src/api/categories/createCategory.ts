@@ -1,11 +1,9 @@
 import type { Category } from "@/types/category";
-import axios from "axios";
-
+import api from "../api";
 
 export const createCategory = async (
   category: Omit<Category, "id">
 ): Promise<Category> => {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  const response = await axios.post(`${apiBase}/categories`, category);
+  const response = await api.post(`/categories`, category);
   return response.data;
 };

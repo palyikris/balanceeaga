@@ -1,7 +1,6 @@
-import axios from "axios";
+import api from "../api";
 
 export async function deleteAllUploads() {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  await axios.delete(`${apiBase}/imports/delete_all`)
+  await api.delete(`/imports/delete_all`);
   return;
 }

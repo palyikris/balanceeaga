@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 
 export const fetchCategoryRadar = async (): Promise<
   {
@@ -7,10 +7,8 @@ export const fetchCategoryRadar = async (): Promise<
     type: string;
   }[]
 > => {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  const response = await axios.get(`${apiBase}/dashboard/categories-summary`);
+  const response = await api.get(`/dashboard/categories-summary`);
   return response.data;
 };
-
 
 export type CategoryRadarData = Awaited<ReturnType<typeof fetchCategoryRadar>>;

@@ -14,6 +14,9 @@ import CategoryExpenses from "@/components/dashboard/CategoryExpenses";
 import { useCategoryExpenses } from "@/hooks/dashboard/useCategoryExpenses";
 import { useSpendingPatterns } from "@/hooks/dashboard/useSpendingPatterns";
 import { ClippedAreaChartForSpendingPatterns } from "@/components/ui/clipped-area-chart-spending-patterns";
+import { useState } from "react";
+import UsefulnessModal from "@/components/dashboard/UsefulnessModal";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const { data: cashflow, isLoading: cashflowLoading } = useCashFlow();
@@ -27,6 +30,11 @@ export default function DashboardPage() {
     useCategoryExpenses();
   const { data: spendingPatterns, isLoading: spendingPatternsLoading } =
     useSpendingPatterns();
+
+  const [isUsefulnessModalOpen, setIsUsefulnessModalOpen] = useState(false);
+  const [usefulnessModalTitle, setUsefulnessModalTitle] = useState("");
+  const [usefulnessModalDescription, setUsefulnessModalDescription] =
+    useState("");
 
   if (
     cashflowLoading ||
@@ -49,15 +57,36 @@ export default function DashboardPage() {
         Pénzügyi áttekintés.
       </h1>
 
+      <UsefulnessModal
+        isOpen={isUsefulnessModalOpen}
+        onClose={() => setIsUsefulnessModalOpen(false)}
+        title={usefulnessModalTitle}
+        description={usefulnessModalDescription}
+      ></UsefulnessModal>
+
       <DashboardSummary
         cashflow={cashflow || []}
         balance={balanceSummary?.total_balance || 0}
       ></DashboardSummary>
 
-      <Card className="bg-graphite/50 p-6">
+      <Card className="bg-graphite/50 p-6 relative">
         <h2 className="text-xl text-offwhite/80 font-bold mb-2">
           Kiadások kategóriák szerint
         </h2>
+        <div className="absolute top-6 right-6">
+          <Button
+            onClick={() => {
+              setUsefulnessModalTitle("Kiadások kategóriák szerint");
+              setUsefulnessModalDescription(
+                "Ez a grafikon segít megérteni, hogy mely kategóriákban költesz a legtöbbet. Így könnyebben azonosíthatod a megtakarítási lehetőségeket és optimalizálhatod a kiadásaidat."
+              );
+              setIsUsefulnessModalOpen(true);
+            }}
+            className="bg-tealblue/10 text-tealblue border border-tealblue/30 hover:bg-tealblue/20 cursor-pointer w-full"
+          >
+            Miért hasznos ez?
+          </Button>
+        </div>
         {radar && radar.length > 0 ? (
           <AnimatedClippedRadarChart data={radar} />
         ) : (
@@ -68,12 +97,40 @@ export default function DashboardPage() {
       <Card className="flex flex-row items-stretch gap-4 bg-transparent p-0 border-none">
         {merchants && merchants.length > 0 ? (
           <>
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 flex flex-col relative">
+              <div className="absolute top-6 right-6">
+                <Button
+                  onClick={() => {
+                    setUsefulnessModalTitle("Top kereskedők");
+                    setUsefulnessModalDescription(
+                      "Ez a szekció megmutatja, hogy mely kereskedőknél költesz a legtöbbet. Ez segíthet azonosítani a fő kiadási forrásokat és lehetőségeket a költségcsökkentésre."
+                    );
+                    setIsUsefulnessModalOpen(true);
+                  }}
+                  className="bg-tealblue/10 text-tealblue border border-tealblue/30 hover:bg-tealblue/20 cursor-pointer w-full"
+                >
+                  Miért hasznos ez?
+                </Button>
+              </div>
               <div className="flex-1">
                 <TopMerchant merchants={merchants} />
               </div>
             </div>
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 flex flex-col relative">
+              <div className="absolute top-6 right-6">
+                <Button
+                  onClick={() => {
+                    setUsefulnessModalTitle("Kiadások kategóriák szerint");
+                    setUsefulnessModalDescription(
+                      "Ez a szekció megmutatja, hogy mely kategóriákban költesz a legtöbbet. Ez segíthet azonosítani a fő kiadási forrásokat és lehetőségeket a költségcsökkentésre."
+                    );
+                    setIsUsefulnessModalOpen(true);
+                  }}
+                  className="bg-tealblue/10 text-tealblue border border-tealblue/30 hover:bg-tealblue/20 cursor-pointer w-full"
+                >
+                  Miért hasznos ez?
+                </Button>
+              </div>
               <div className="flex-1">
                 <CategoryExpenses categoryExpenses={categoryExpenses || []} />
               </div>
@@ -85,19 +142,59 @@ export default function DashboardPage() {
           </div>
         )}
       </Card>
-      <Card className="bg-graphite/50 p-6">
+      <Card className="bg-graphite/50 p-6 relative">
+        <div className="absolute top-6 right-6">
+          <Button
+            onClick={() => {
+              setUsefulnessModalTitle("Havi bevételek és kiadások");
+              setUsefulnessModalDescription(
+                "Ez a grafikon segít nyomon követni havi bevételeidet és kiadásaidat, így jobban megértheted pénzügyi helyzetedet és tervezheted a jövőt."
+              );
+              setIsUsefulnessModalOpen(true);
+            }}
+            className="bg-tealblue/10 text-tealblue border border-tealblue/30 hover:bg-tealblue/20 cursor-pointer w-full"
+          >
+            Miért hasznos ez?
+          </Button>
+        </div>
         <h2 className="text-xl text-offwhite/80 font-bold mb-2">
           Havi bevételek és kiadások
         </h2>
-        <ClippedAreaChart chartData={monthlyBalance || []}></ClippedAreaChart>
+        {monthlyBalance && monthlyBalance.length > 0 ? (
+          <ClippedAreaChart chartData={monthlyBalance || []}></ClippedAreaChart>
+        ) : (
+          <p className="text-offwhite/80">
+            Nincs adat a havi bevételekről és kiadásokról.
+          </p>
+        )}
       </Card>
-      <Card className="bg-graphite/50 p-6">
+      <Card className="bg-graphite/50 p-6 relative">
+        <div className="absolute top-6 right-6">
+          <Button
+            onClick={() => {
+              setUsefulnessModalTitle("Napi költési minták");
+              setUsefulnessModalDescription(
+                "Ez a grafikon segít nyomon követni havi bevételeidet és kiadásaidat, így jobban megértheted pénzügyi helyzetedet és tervezheted a jövőt."
+              );
+              setIsUsefulnessModalOpen(true);
+            }}
+            className="bg-tealblue/10 text-tealblue border border-tealblue/30 hover:bg-tealblue/20 cursor-pointer w-full"
+          >
+            Miért hasznos ez?
+          </Button>
+        </div>
         <h2 className="text-xl text-offwhite/80 font-bold mb-2">
           Napi költési minták
         </h2>
-        <ClippedAreaChartForSpendingPatterns
-          chartData={spendingPatterns?.by_weekday || []}
-        ></ClippedAreaChartForSpendingPatterns>
+        {spendingPatterns && spendingPatterns.by_weekday.length > 0 ? (
+          <ClippedAreaChartForSpendingPatterns
+            chartData={spendingPatterns.by_weekday || []}
+          ></ClippedAreaChartForSpendingPatterns>
+        ) : (
+          <p className="text-offwhite/80">
+            Nincs adat a napi költési mintákról.
+          </p>
+        )}
       </Card>
     </div>
   );

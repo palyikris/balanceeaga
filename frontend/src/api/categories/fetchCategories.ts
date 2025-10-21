@@ -1,19 +1,16 @@
 import type { Category } from "@/types/category";
-import axios from "axios";
-
+import api from "../api";
 
 export const fetchCategories = async (): Promise<Category[]> => {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  const response = await axios.get(`${apiBase}/categories`);
+  const response = await api.get(`/categories`);
 
   return response.data;
-}
+};
 
 export const fetchCategoryById = async (id: string): Promise<Category> => {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  const response = await axios.get(`${apiBase}/categories/${id}`);
+  const response = await api.get(`/categories/${id}`);
   return response.data;
-}
+};
 
 
 

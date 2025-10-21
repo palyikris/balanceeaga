@@ -1,8 +1,6 @@
-import axios from "axios";
-
+import api from "../api";
 
 export async function deleteTransaction(id: string) {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  const res = await axios.delete(`${apiBase}/transactions/${id}`);
+  const res = await api.delete(`/transactions/${id}`);
   return res.data;
 }

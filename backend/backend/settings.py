@@ -11,10 +11,16 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from corsheaders.defaults import default_headers
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env located at the project base directory
+# This enables os.getenv("VAR_NAME") to read values defined in BASE_DIR/.env
+load_dotenv(BASE_DIR / ".env")
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
@@ -149,7 +155,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True  # dev
 CORS_ALLOW_CREDENTIALS = True
-
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "authorization",
+    "x-user-id",
+]
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 
 export const fetchBalanceSummary = async (): Promise<{
   income: number;
@@ -6,7 +6,6 @@ export const fetchBalanceSummary = async (): Promise<{
   net_savings: number;
   total_balance: number;
 }> => {
-  const apiBase = import.meta.env.VITE_API_BASE;
-  const response = await axios.get(`${apiBase}/dashboard/balance-summary`);
+  const response = await api.get(`/dashboard/balance-summary`);
   return response.data;
-}
+};

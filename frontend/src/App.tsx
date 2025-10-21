@@ -3,6 +3,7 @@ import Header from "./components/header/header";
 import { DotPattern } from "@/components/magicui/dot-pattern";
 
 export default function App() {
+
   return (
     <div className="min-h-full text-offwhite">
       <Header></Header>
