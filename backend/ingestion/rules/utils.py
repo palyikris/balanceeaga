@@ -1,5 +1,6 @@
 import re
 from ingestion.models import Rule, RuleMatchType, Transaction, Category
+from django.db.models import Q
 
 
 def apply_rules_for_user(user_id: str) -> int:
@@ -17,7 +18,9 @@ def apply_rules_for_user(user_id: str) -> int:
     """
     # Fetch enabled rules in order of priority
     rules = list(
-        Rule.objects.filter(user_id=user_id, enabled=True).order_by("priority")
+        Rule.objects.filter(
+            Q(user_id=user_id) | Q(user_id="default"), enabled=True
+        ).order_by("priority")
     )
 
     # Fetch uncategorized transactions
@@ -29,7 +32,8 @@ def apply_rules_for_user(user_id: str) -> int:
 
     # Preload category mapping (UUID -> Category)
     category_map = {
-        str(cat.id): cat for cat in Category.objects.filter(user_id=user_id)
+        str(cat.id): cat
+        for cat in Category.objects.filter(Q(user_id=user_id) | Q(user_id="default"))
     }
 
     for txn in txns:

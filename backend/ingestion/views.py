@@ -276,7 +276,9 @@ class RuleViewSet(viewsets.ModelViewSet):
                 {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-        return Rule.objects.filter(user_id=user_id).order_by("-id")
+        return Rule.objects.filter(Q(user_id=user_id) | Q(user_id="default")).order_by(
+            "-id"
+        )
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -292,7 +294,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
                 {"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-        return Category.objects.filter(user_id=user_id).order_by("-id")
+        return Category.objects.filter(
+            Q(user_id=user_id) | Q(user_id="default")
+        ).order_by("-id")
 
     def perform_create(self, serializer):
         serializer.save(user_id="dev-user")
@@ -582,6 +586,7 @@ def category_expenses(request):
     return Response(data)
 
 from django.db.models.functions import ExtractWeekDay
+from django.db.models import Q
 
 
 @api_view(["GET"])

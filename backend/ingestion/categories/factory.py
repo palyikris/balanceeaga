@@ -1,37 +1,36 @@
 from ingestion.models import Category
 
 
-def seed_demo_categories(user_id: str):
+def seed_default_categories(user_id: str):
     """
-    Create demo categories based on realistic personal finance data
-    derived from actual transaction exports.
+    Alap kategóriák minden új felhasználónak.
     """
-    demo_categories = {
-        # --- Income ---
-        "Salary & Wages": "income",
-        "Transfers In": "income",
-        "Investment Income": "income",
-        # --- Expenses ---
-        "Groceries": "expense",
-        "Restaurants & Cafes": "expense",
-        "Online Subscriptions": "expense",
-        "Entertainment": "expense",
-        "Transport": "expense",
-        "Shopping & Fashion": "expense",
-        "Electronics": "expense",
-        "Home & Utilities": "expense",
-        "Insurance & Health": "expense",
-        "Housing & Rent": "expense",
-        "Education & Books": "expense",
-        "Travel": "expense",
-        "Other Expenses": "expense",
-        # --- Transfers ---
-        "Transfers Out": "transfer",
-        "Savings & Investments": "transfer",
+    default_categories = {
+        # --- Bevétel ---
+        "Fizetés és bér": "income",
+        "Átutalások (bejövő)": "income",
+        "Kamat / Befektetési bevétel": "income",
+        # --- Kiadás ---
+        "Bevásárlás": "expense",
+        "Étterem és kávézó": "expense",
+        "Előfizetések": "expense",
+        "Szórakozás": "expense",
+        "Közlekedés": "expense",
+        "Ruházat és vásárlás": "expense",
+        "Elektronika": "expense",
+        "Otthon és rezsi": "expense",
+        "Biztosítás és egészség": "expense",
+        "Lakhatás és bérlés": "expense",
+        "Oktatás és könyvek": "expense",
+        "Utazás": "expense",
+        "Egyéb kiadások": "expense",
+        # --- Átvezetés / megtakarítás ---
+        "Átvezetések (kimenő)": "transfer",
+        "Megtakarítások és befektetések": "transfer",
     }
 
     created_map = {}
-    for name, ctype in demo_categories.items():
+    for name, ctype in default_categories.items():
         category, _ = Category.objects.get_or_create(
             user_id=user_id,
             name=name,

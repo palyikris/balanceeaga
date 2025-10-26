@@ -1,338 +1,308 @@
 from ingestion.models import Rule
-from ingestion.categories.factory import seed_demo_categories
+from ingestion.categories.factory import seed_default_categories
 
 
-def seed_demo_rules(user_id: str):
+def seed_default_rules(user_id: str):
     """
-    Create a realistic set of categorization rules based on
-    common transaction patterns observed in Hungarian bank exports.
+    Alapértelmezett szabályok új felhasználókhoz (hu).
     """
-    categories = seed_demo_categories(user_id)
+    categories = seed_default_categories(user_id)
 
-    demo_rules = [
-        # --- Income ---
+    default_rules = [
+        # --- Bevétel ---
         {
-            "name": "Monthly salary",
+            "name": "Fizetés",
             "match_type": "contains",
             "match_value": "fizetés",
-            "cat": "Salary & Wages",
+            "cat": "Fizetés és bér",
         },
         {
-            "name": "Payroll or employer transfer",
+            "name": "Munkahelyi utalás",
             "match_type": "contains",
             "match_value": "bt.",
-            "cat": "Salary & Wages",
+            "cat": "Fizetés és bér",
         },
         {
-            "name": "Revolut top-up or incoming",
+            "name": "Revolut bejövő",
             "match_type": "contains",
             "match_value": "revolut",
-            "cat": "Transfers In",
+            "cat": "Átutalások (bejövő)",
         },
         {
-            "name": "Wise incoming transfer",
+            "name": "Wise bejövő",
             "match_type": "contains",
             "match_value": "wise",
-            "cat": "Transfers In",
+            "cat": "Átutalások (bejövő)",
         },
         {
-            "name": "Interest income",
+            "name": "Kamatjóváírás",
             "match_type": "contains",
             "match_value": "kamat",
-            "cat": "Investment Income",
+            "cat": "Kamat / Befektetési bevétel",
         },
-        # --- Groceries & Food ---
+        # --- Élelmiszer és étkezés ---
         {
-            "name": "Lidl groceries",
+            "name": "Lidl",
             "match_type": "contains",
             "match_value": "lidl",
-            "cat": "Groceries",
+            "cat": "Bevásárlás",
         },
         {
-            "name": "Aldi groceries",
-            "match_type": "contains",
-            "match_value": "aldi",
-            "cat": "Groceries",
-        },
-        {
-            "name": "Spar groceries",
+            "name": "Spar",
             "match_type": "contains",
             "match_value": "spar",
-            "cat": "Groceries",
+            "cat": "Bevásárlás",
         },
         {
-            "name": "Tesco groceries",
+            "name": "Tesco",
             "match_type": "contains",
             "match_value": "tesco",
-            "cat": "Groceries",
+            "cat": "Bevásárlás",
         },
         {
-            "name": "Penny groceries",
+            "name": "Penny",
             "match_type": "contains",
             "match_value": "penny",
-            "cat": "Groceries",
+            "cat": "Bevásárlás",
         },
         {
-            "name": "McDonalds",
+            "name": "McDonald’s",
             "match_type": "contains",
             "match_value": "mcdonald",
-            "cat": "Restaurants & Cafes",
+            "cat": "Étterem és kávézó",
         },
         {
-            "name": "KFC",
-            "match_type": "contains",
-            "match_value": "kfc",
-            "cat": "Restaurants & Cafes",
-        },
-        {
-            "name": "Burger King",
-            "match_type": "contains",
-            "match_value": "burger king",
-            "cat": "Restaurants & Cafes",
-        },
-        {
-            "name": "Wolt food delivery",
+            "name": "Wolt",
             "match_type": "contains",
             "match_value": "wolt",
-            "cat": "Restaurants & Cafes",
+            "cat": "Étterem és kávézó",
         },
         {
-            "name": "Bolt Food delivery",
+            "name": "Bolt Food",
             "match_type": "contains",
             "match_value": "bolt food",
-            "cat": "Restaurants & Cafes",
-        },
-        {
-            "name": "Café",
-            "match_type": "contains",
-            "match_value": "café",
-            "cat": "Restaurants & Cafes",
+            "cat": "Étterem és kávézó",
         },
         {
             "name": "Starbucks",
             "match_type": "contains",
             "match_value": "starbucks",
-            "cat": "Restaurants & Cafes",
+            "cat": "Étterem és kávézó",
         },
-        # --- Subscriptions & Entertainment ---
+        # --- Előfizetések ---
         {
-            "name": "Netflix subscription",
+            "name": "Netflix",
             "match_type": "contains",
             "match_value": "netflix",
-            "cat": "Online Subscriptions",
+            "cat": "Előfizetések",
         },
         {
             "name": "Spotify",
             "match_type": "contains",
             "match_value": "spotify",
-            "cat": "Online Subscriptions",
+            "cat": "Előfizetések",
         },
         {
             "name": "YouTube Premium",
             "match_type": "contains",
             "match_value": "youtube",
-            "cat": "Online Subscriptions",
+            "cat": "Előfizetések",
         },
         {
-            "name": "Apple services",
+            "name": "Apple szolgáltatások",
             "match_type": "contains",
             "match_value": "apple",
-            "cat": "Online Subscriptions",
+            "cat": "Előfizetések",
         },
+        # --- Szórakozás ---
         {
-            "name": "Steam / PlayStation",
+            "name": "Steam",
             "match_type": "contains",
             "match_value": "steam",
-            "cat": "Entertainment",
+            "cat": "Szórakozás",
         },
         {
-            "name": "Cinema or tickets",
+            "name": "Mozi / Jegy",
             "match_type": "contains",
             "match_value": "mozi",
-            "cat": "Entertainment",
+            "cat": "Szórakozás",
         },
-        # --- Transport ---
+        # --- Közlekedés ---
         {
-            "name": "Public transport BKK",
+            "name": "BKK / tömegközlekedés",
             "match_type": "contains",
             "match_value": "bkk",
-            "cat": "Transport",
+            "cat": "Közlekedés",
         },
         {
-            "name": "Parking fees",
+            "name": "Parkolás",
             "match_type": "contains",
             "match_value": "parkolás",
-            "cat": "Transport",
+            "cat": "Közlekedés",
         },
         {
-            "name": "Fuel / MOL",
+            "name": "MOL töltés",
             "match_type": "contains",
             "match_value": "mol",
-            "cat": "Transport",
+            "cat": "Közlekedés",
         },
         {
-            "name": "Bolt / Uber ride",
-            "match_type": "contains",
-            "match_value": "bolt",
-            "cat": "Transport",
-        },
-        {
-            "name": "Uber",
+            "name": "Bolt / Uber utazás",
             "match_type": "contains",
             "match_value": "uber",
-            "cat": "Transport",
+            "cat": "Közlekedés",
         },
-        # --- Shopping ---
+        # --- Vásárlás ---
         {
             "name": "Zara",
             "match_type": "contains",
             "match_value": "zara",
-            "cat": "Shopping & Fashion",
+            "cat": "Ruházat és vásárlás",
         },
         {
             "name": "H&M",
             "match_type": "contains",
             "match_value": "h&m",
-            "cat": "Shopping & Fashion",
+            "cat": "Ruházat és vásárlás",
         },
         {
             "name": "Decathlon",
             "match_type": "contains",
             "match_value": "decathlon",
-            "cat": "Shopping & Fashion",
+            "cat": "Ruházat és vásárlás",
         },
         {
             "name": "Amazon",
             "match_type": "contains",
             "match_value": "amazon",
-            "cat": "Shopping & Fashion",
+            "cat": "Ruházat és vásárlás",
         },
         {
             "name": "MediaMarkt",
             "match_type": "contains",
             "match_value": "mediamarkt",
-            "cat": "Electronics",
+            "cat": "Elektronika",
         },
         {
             "name": "IKEA",
             "match_type": "contains",
             "match_value": "ikea",
-            "cat": "Home & Utilities",
+            "cat": "Otthon és rezsi",
         },
-        # --- Utilities & Services ---
+        # --- Szolgáltatók ---
         {
             "name": "E.ON",
             "match_type": "contains",
             "match_value": "e.on",
-            "cat": "Home & Utilities",
+            "cat": "Otthon és rezsi",
         },
         {
             "name": "MVM",
             "match_type": "contains",
             "match_value": "mvm",
-            "cat": "Home & Utilities",
+            "cat": "Otthon és rezsi",
         },
         {
             "name": "Telekom",
             "match_type": "contains",
             "match_value": "telekom",
-            "cat": "Home & Utilities",
+            "cat": "Otthon és rezsi",
         },
         {
             "name": "Vodafone",
             "match_type": "contains",
             "match_value": "vodafone",
-            "cat": "Home & Utilities",
+            "cat": "Otthon és rezsi",
         },
         {
-            "name": "Insurance payment",
+            "name": "Biztosítás",
             "match_type": "contains",
             "match_value": "biztosító",
-            "cat": "Insurance & Health",
+            "cat": "Biztosítás és egészség",
         },
         {
-            "name": "Pharmacy",
+            "name": "Gyógyszertár",
             "match_type": "contains",
             "match_value": "gyógyszertár",
-            "cat": "Insurance & Health",
+            "cat": "Biztosítás és egészség",
         },
         {
-            "name": "Dentist or clinic",
+            "name": "Klinika / Fogorvos",
             "match_type": "contains",
             "match_value": "klinika",
-            "cat": "Insurance & Health",
+            "cat": "Biztosítás és egészség",
         },
-        # --- Housing ---
+        # --- Lakhatás ---
         {
-            "name": "Rent payment",
+            "name": "Lakbér",
             "match_type": "amount_range",
             "match_value": "-400000,-100000",
-            "cat": "Housing & Rent",
+            "cat": "Lakhatás és bérlés",
         },
         {
-            "name": "Maintenance fee",
+            "name": "Közös költség",
             "match_type": "contains",
             "match_value": "közös költség",
-            "cat": "Housing & Rent",
+            "cat": "Lakhatás és bérlés",
         },
-        # --- Education & Books ---
+        # --- Oktatás ---
         {
-            "name": "University fee",
+            "name": "Egyetem / tandíj",
             "match_type": "contains",
             "match_value": "egyetem",
-            "cat": "Education & Books",
+            "cat": "Oktatás és könyvek",
         },
         {
-            "name": "Books",
+            "name": "Könyv",
             "match_type": "contains",
             "match_value": "book",
-            "cat": "Education & Books",
+            "cat": "Oktatás és könyvek",
         },
-        # --- Travel ---
+        # --- Utazás ---
         {
-            "name": "Airline tickets",
+            "name": "Ryanair repülőjegy",
             "match_type": "contains",
             "match_value": "ryanair",
-            "cat": "Travel",
+            "cat": "Utazás",
         },
         {
-            "name": "Accommodation / Airbnb",
+            "name": "Szállás / Airbnb",
             "match_type": "contains",
             "match_value": "airbnb",
-            "cat": "Travel",
+            "cat": "Utazás",
         },
         {
             "name": "Booking.com",
             "match_type": "contains",
             "match_value": "booking.com",
-            "cat": "Travel",
+            "cat": "Utazás",
         },
-        # --- Transfers / Savings ---
+        # --- Megtakarítás / befektetés ---
         {
-            "name": "Savings account transfer",
+            "name": "Megtakarítási utalás",
             "match_type": "contains",
             "match_value": "megtakarítás",
-            "cat": "Savings & Investments",
+            "cat": "Megtakarítások és befektetések",
         },
         {
-            "name": "Investment account transfer",
+            "name": "Értékpapír számla",
             "match_type": "contains",
             "match_value": "értékpapír",
-            "cat": "Savings & Investments",
+            "cat": "Megtakarítások és befektetések",
         },
     ]
 
     created = 0
-    for idx, rule_data in enumerate(demo_rules, start=1):
-        category_obj = categories[rule_data["cat"]]
+    for idx, rule in enumerate(default_rules, start=1):
+        category_obj = categories[rule["cat"]]
         _, created_flag = Rule.objects.get_or_create(
             user_id=user_id,
-            name=rule_data["name"],
+            name=rule["name"],
             defaults={
                 "priority": idx,
                 "enabled": True,
-                "match_type": rule_data["match_type"],
-                "match_value": rule_data["match_value"],
+                "match_type": rule["match_type"],
+                "match_value": rule["match_value"],
                 "action_set_category": str(category_obj.id),
             },
         )
