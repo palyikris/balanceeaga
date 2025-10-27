@@ -7,8 +7,13 @@ import { useMutation } from "@tanstack/react-query";
 export const useUpdateCategory = ( ) => {
   return useMutation({
     mutationKey: ["updateCategory"],
-    mutationFn: ({ id, data }: { id: string; data: Omit<Category, "id"> }) =>
-      updateCategory(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Omit<Category, "id" | "reference_count">;
+    }) => updateCategory(id, data),
     retry: 1,
     retryDelay: 10000,
     onError: (error) => {

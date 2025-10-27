@@ -46,7 +46,7 @@ export default function CategoriesPage() {
   const onSubmit = (values: Category) => {
     console.log(editing);
     if (editing) {
-      const payload: Omit<Category, "id"> = {
+      const payload: Omit<Category, "id" | "reference_count"> = {
         name: values.name,
         type: values.type,
         user_id: values.user_id,
@@ -56,7 +56,6 @@ export default function CategoriesPage() {
           id: editing.id,
           data: {
             ...payload,
-            user_id: "dev-user",
           },
         },
         {
@@ -70,7 +69,7 @@ export default function CategoriesPage() {
       return;
     }
 
-    const payload: Omit<Category, "id"> = {
+    const payload: Omit<Category, "id" | "reference_count"> = {
       name: values.name,
       type: values.type,
       user_id: values.user_id,

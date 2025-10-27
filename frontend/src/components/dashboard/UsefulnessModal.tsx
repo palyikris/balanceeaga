@@ -38,7 +38,7 @@ export default function UsefulnessModal(props: UsefulnessModalProps) {
                 variant="outline"
                 className="bg-tealblue/10 text-tealblue border border-tealblue/30 hover:bg-tealblue/20 hover:text-tealblue cursor-pointer mt-6"
               >
-                Cancel
+                Bezárás
               </Button>
             </DialogClose>
           </DialogFooter>

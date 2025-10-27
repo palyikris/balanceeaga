@@ -31,7 +31,6 @@ const ruleSchema = z.object({
 export default function RulesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Rule | null>(null);
-
   const { data, isLoading } = useAllRules();
   const createRule = useCreateRule();
   const updateRule = useUpdateRule();
@@ -49,7 +48,6 @@ export default function RulesPage() {
       action_set_category: null,
       enabled: true,
       priority: 0,
-      user_id: "dev-user",
       action_mark_transfer: false,
     },
   });
@@ -65,7 +63,6 @@ export default function RulesPage() {
         enabled: values.enabled,
         priority: values.priority,
         action_mark_transfer: values.action_mark_transfer,
-        user_id: "dev-user",
       };
       updateRule.mutate(
         {

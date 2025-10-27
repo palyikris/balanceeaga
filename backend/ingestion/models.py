@@ -110,6 +110,7 @@ class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_id = models.CharField(max_length=64)
     name = models.CharField(max_length=64)
+    reference_count = models.IntegerField(default=0)
     type = models.CharField(
         max_length=16,
         choices=[

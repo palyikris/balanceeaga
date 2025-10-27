@@ -19,25 +19,25 @@ def get_access_token(request):
         return None
 
     access_token = auth_header.split("Bearer ")[-1].strip()
-    supabase_url = os.getenv("SUPABASE_URL")
-    supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv(
-        "SUPABASE_ANON_KEY"
-    )
-    
-    print(f"Supabase URL: {supabase_url}")
+    # supabase_url = os.getenv("SUPABASE_URL")
+    # supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv(
+    #     "SUPABASE_ANON_KEY"
+    # )
 
-    if not supabase_url or not supabase_key:
-        return None
+    # print(f"Supabase URL: {supabase_url}")
 
-    supabase = create_client(supabase_url, supabase_key)
-    print("Validating access token with Supabase...")
+    # if not supabase_url or not supabase_key:
+    #     return None
 
-    try:
-        response = supabase.auth.get_user(access_token)        
-        # ✅ check status and data explicitly
-        if not response or not response.user:
-            return None
-    except Exception:
-        return None
+    # supabase = create_client(supabase_url, supabase_key)
+    # print("Validating access token with Supabase...")
+
+    # try:
+    #     response = supabase.auth.get_user(access_token)
+    #     # ✅ check status and data explicitly
+    #     if not response or not response.user:
+    #         return None
+    # except Exception:
+    #     return None
 
     return access_token

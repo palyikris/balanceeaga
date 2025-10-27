@@ -5,4 +5,5 @@ export interface Category {
   user_id: string;
   name: string;
   type: CategoryType;
+  reference_count: number;
 }

@@ -280,6 +280,14 @@ class RuleViewSet(viewsets.ModelViewSet):
             "-id"
         )
 
+    def perform_create(self, serializer):
+        user_id = get_user_id(self.request)
+        serializer.save(user_id=user_id)
+
+    def perform_update(self, serializer):
+        user_id = get_user_id(self.request)
+        serializer.save(user_id=user_id)
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all().order_by("-id")
@@ -299,7 +307,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
         ).order_by("-id")
 
     def perform_create(self, serializer):
-        serializer.save(user_id="dev-user")
+        user_id = get_user_id(self.request)
+        serializer.save(user_id=user_id)
+
+    def perform_update(self, serializer):
+        user_id = get_user_id(self.request)
+        serializer.save(user_id=user_id)
 
 
 from decimal import Decimal

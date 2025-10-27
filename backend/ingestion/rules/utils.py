@@ -36,6 +36,9 @@ def apply_rules_for_user(user_id: str) -> int:
         for cat in Category.objects.filter(Q(user_id=user_id) | Q(user_id="default"))
     }
 
+    # Track which categories need updating
+    updated_categories = set()
+
     for txn in txns:
         text = f"{txn.description_raw or ''} {txn.counterparty or ''}".lower()
 
@@ -49,6 +52,8 @@ def apply_rules_for_user(user_id: str) -> int:
                 if category:
                     txn.category = category
                     updated_count += 1
+                    category.reference_count += 1
+                    updated_categories.add(category)
                 break
 
             elif rule.match_type == RuleMatchType.REGEX and re.search(
@@ -58,6 +63,8 @@ def apply_rules_for_user(user_id: str) -> int:
                 if category:
                     txn.category = category
                     updated_count += 1
+                    category.reference_count += 1
+                    updated_categories.add(category)
                 break
 
             elif (
@@ -68,6 +75,8 @@ def apply_rules_for_user(user_id: str) -> int:
                 if category:
                     txn.category = category
                     updated_count += 1
+                    category.reference_count += 1
+                    updated_categories.add(category)
                 break
 
             # --- match by numeric range ---
@@ -79,11 +88,16 @@ def apply_rules_for_user(user_id: str) -> int:
                         if category:
                             txn.category = category
                             updated_count += 1
+                            category.reference_count += 1
+                            updated_categories.add(category)
                         break
                 except Exception:
                     continue
 
     if updated_count:
         Transaction.objects.bulk_update(txns, ["category"])
+
+    if updated_categories:
+        Category.objects.bulk_update(updated_categories, ["reference_count"])
 
     return updated_count

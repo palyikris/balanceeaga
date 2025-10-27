@@ -25,7 +25,8 @@ class ImportUploadSerializer(serializers.Serializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "name", "type"]
+        fields = ["id", "name", "type", "reference_count"]
+        read_only_fields = ("id", "reference_count")
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -60,4 +61,4 @@ class RuleSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ("id", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at", "user_id")

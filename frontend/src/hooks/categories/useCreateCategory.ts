@@ -8,7 +8,8 @@ export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["createCategory"],
-    mutationFn: (data: Omit<Category, "id">) => createCategory(data),
+    mutationFn: (data: Omit<Category, "id" | "reference_count">) =>
+      createCategory(data),
     retry: 1,
     retryDelay: 10000,
     onSuccess: () => {

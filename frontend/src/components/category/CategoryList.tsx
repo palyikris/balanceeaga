@@ -55,6 +55,21 @@ export default function CategoryList({
                 >
                   {cat.type}
                 </span>
+                {cat.reference_count > 0 ? (
+                  <span className="ml-2 border-l border-offwhite/30 pl-2 text-offwhite/50 text-sm">
+                    {" "}
+                    Használja{" "}
+                    <span className="text-limeneon">
+                      {cat.reference_count}
+                    </span>{" "}
+                    tranzakció.
+                  </span>
+                ) : (
+                  <span className="ml-2 border-l border-offwhite/30 pl-2 text-electric/50 text-sm">
+                    {" "}
+                    Nem használja tranzakció.
+                  </span>
+                )}
               </span>
               <div className="flex gap-2">
                 <Button
