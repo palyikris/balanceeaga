@@ -17,19 +17,18 @@ interface RuleDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   editing: Rule | null;
-  handleSubmit: UseFormHandleSubmit<
-    {
-      name: string;
-      match_type: "contains" | "regex" | "equals" | "amount_range";
-      match_value: string;
-      action_set_category?: string | null;
-      enabled: boolean;
-      priority: number;
-      user_id: string;
-      action_mark_transfer: boolean;
-    }
-  >;
-  onSubmit: (values: Omit<Rule, "id" | "created_at" | "updated_at">) => void;
+  handleSubmit: UseFormHandleSubmit<{
+    name: string;
+    match_type: "contains" | "regex" | "equals" | "amount_range";
+    match_value: string;
+    action_set_category?: string | null;
+    enabled: boolean;
+    priority: number;
+    action_mark_transfer: boolean;
+  }>;
+  onSubmit: (
+    values: Omit<Rule, "id" | "created_at" | "updated_at" | "user_id">
+  ) => void;
   register: UseFormRegister<{
     name: string;
     match_type: "contains" | "regex" | "equals" | "amount_range";
@@ -37,7 +36,6 @@ interface RuleDialogProps {
     action_set_category?: string | null;
     enabled: boolean;
     priority: number;
-    user_id: string;
     action_mark_transfer: boolean;
   }>;
   watch: UseFormWatch<{
@@ -47,7 +45,6 @@ interface RuleDialogProps {
     action_set_category?: string | null;
     enabled: boolean;
     priority: number;
-    user_id: string;
     action_mark_transfer: boolean;
   }>;
   categories: Category[];

@@ -24,7 +24,6 @@ const ruleSchema = z.object({
   action_set_category: z.string().nullable().optional(),
   enabled: z.boolean(),
   priority: z.number(),
-  user_id: z.string(),
   action_mark_transfer: z.boolean(),
 });
 
@@ -52,8 +51,9 @@ export default function RulesPage() {
     },
   });
 
-  const onSubmit = (values: Omit<Rule, "id" | "created_at" | "updated_at">) => {
-    console.log(editing);
+  const onSubmit = (
+    values: Omit<Rule, "id" | "created_at" | "updated_at" | "user_id">
+  ) => {
     if (editing) {
       const payload: Partial<Omit<Rule, "id" | "created_at" | "updated_at">> = {
         name: values.name,

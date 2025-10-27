@@ -11,7 +11,7 @@ Minden rész *checklist* formátumban van, hogy könnyen követni tudd a haladá
 
 - [x] **Repo létrehozása**
   - [x] Új GitHub repository létrehozása: `balanceeaga`
-  - [x] `.gitignore` feltöltése (Node.js, Python, Docker, IDE fájlok kizárva)
+  - [x] `.gitignore` feltöltése (Node.js, Python, Docker, IDE fájlo k kizárva)
   - [x] Alap README.md feltöltése
 
 - [x] **Projekt skeleton**

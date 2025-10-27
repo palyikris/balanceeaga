@@ -250,8 +250,19 @@ class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
             serializer = self.get_serializer(instance)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+        print(
+            "Setting category to",
+            cat_id,
+            "for transaction",
+            str(instance.id),
+            "for user",
+            instance.user_id,
+        )
+
         try:
-            category = Category.objects.get(pk=cat_id, user_id=instance.user_id)
+            category = Category.objects.get(
+                Q(user_id=instance.user_id) | Q(user_id="default"), pk=cat_id
+            )
         except Category.DoesNotExist:
             return Response(
                 {"detail": "Category not found"}, status=status.HTTP_404_NOT_FOUND
@@ -553,6 +564,9 @@ def category_expenses(request):
     period = request.GET.get("period")
     today = date.today()
 
+    start_date = None
+    end_date = None
+
     if period:
         try:
             year, month = map(int, period.split("-"))
@@ -561,32 +575,30 @@ def category_expenses(request):
             return Response(
                 {"detail": "Invalid period format (use YYYY-MM)"}, status=400
             )
-    else:
-        start_date = today.replace(day=1)
 
-    # hónap utolsó napja
-    if start_date.month == 12:
-        end_date = date(start_date.year + 1, 1, 1)
-    else:
-        end_date = date(start_date.year, start_date.month + 1, 1)
+        # hónap utolsó napja (következő hónap első napja mint felső zárt határ)
+        if start_date.month == 12:
+            end_date = date(start_date.year + 1, 1, 1)
+        else:
+            end_date = date(start_date.year, start_date.month + 1, 1)
 
     # tranzakciók összesítése kategóriánként
+    qs = Transaction.objects.filter(
+        user_id=user_id,
+        category__type="expense",
+    )
+    # ha period meg van adva, akkor időszakra szűrünk, különben nincs dátum limit
+    if start_date and end_date:
+        qs = qs.filter(booking_date__gte=start_date, booking_date__lt=end_date)
+
     qs = (
-        Transaction.objects.filter(
-            user_id=user_id,
-            booking_date__gte=start_date,
-            booking_date__lt=end_date,
-            category__type="expense",
-        )
-        .select_related("category")
+        qs.select_related("category")
         .values(name=F("category__name"))
         .annotate(amount=Sum("amount"))
-        .order_by("-amount")
+        .order_by("amount")
     )
 
-    total = sum((row["amount"] or Decimal("0")) for row in qs) or Decimal("1")
-
-    # top 5 + százalékos arány
+    # top 5
     data = [
         {
             "category": row["name"],
